@@ -15,6 +15,7 @@
   let preview = null;
   let activeGallery = null;
   const frameDialog = $('frame-dialog');
+  const scrollOptions = (block) => ({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block });
 
   function timecode(seconds) {
     const value = Math.max(0, Number(seconds) || 0);
@@ -121,7 +122,7 @@
     const open = $('how-panel').hidden;
     $('how-panel').hidden = !open;
     $('how-button').setAttribute('aria-expanded', String(open));
-    if (open) $('how-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (open) $('how-panel').scrollIntoView(scrollOptions('center'));
   });
 
   function setBusy(value) {
@@ -210,7 +211,7 @@
     if (!preview) return;
     const jump = () => {
       preview.currentTime = seconds;
-      preview.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      preview.scrollIntoView(scrollOptions('center'));
     };
     if (preview.readyState >= 1) jump();
     else preview.addEventListener('loadedmetadata', jump, { once: true });
@@ -321,7 +322,7 @@
       source.textContent = 'В учебном примере нормативный источник не указан. Здесь будет документ и пункт, связанный с событием.';
     } else if (rule?.status === 'unmapped') {
       source.textContent = rule.reason;
-      card.append(node('strong', 'review-note', 'Требует классификации и проверки человеком'));
+      card.append(node('strong', 'review-note', 'Основание требует уточнения'));
     } else if (rule) {
       source.append(node('strong', '', `${rule.document}${rule.section ? `, ${rule.section}` : ''}`));
       if (rule.url) {
@@ -340,7 +341,49 @@
       source.textContent = 'Источник правила не передан моделью. Требуется уточнение перед выводом о нарушении.';
     }
     card.append(source);
+    const context = event.rule_context;
+    if (!demo && context) {
+      if (rule?.status === 'provided') card.append(node('p', 'review-note', 'Связь с правилом условная. Проверьте, выполнены ли условия его применимости.'));
+      const conditionLabels = {
+        cash_payout: 'Выполняется выдача наличных клиенту.',
+        amount_due_established: 'Сумма к выдаче установлена по документам операции.',
+        customer_cash_receipt: 'Выполняется приём наличных от клиента.',
+        complete_identity_check_sequence: 'Доступна полная последовательность проверки документов, включая цифровой способ.',
+        cash_already_accepted: 'Деньги уже приняты по завершённой операции.',
+        not_current_customer_cash: 'Эти деньги не относятся к текущей операции клиента.',
+        cash_recount_or_sorting_operation: 'Выполняется операция пересчёта или сортировки.',
+        complete_counting_sequence: 'Доступна полная последовательность пересчёта.',
+        collector_delivery_established: 'Подтверждена доставка подразделением инкассации.',
+        document_kind_established: 'Установлено, какой документ требуется при этой передаче.',
+        customer_cash_receipt_or_counting_continues: 'Приём или пересчёт продолжается после ухода клиента.',
+        customer_absent: 'Клиент отсутствует при продолжающемся приёме или пересчёте.',
+        cash_node_location_confirmed: 'Рабочее место находится внутри кассового узла.',
+        employee_personal_items_confirmed: 'Вещи являются личными вещами сотрудника.',
+        national_currency_cash_operation: 'Операция выполняется с национальной валютой.',
+        banknote_assessment_needed: 'Причина отвода банкноты требует проверки.',
+        distinct_customer_cash_sequences: 'Банкноты принадлежат разным последовательным операциям клиентов.',
+        earlier_cash_already_accepted: 'Деньги предыдущего клиента уже приняты.',
+      };
+      const required = Array.isArray(context.applicability_required) ? context.applicability_required : [];
+      const conditions = required.map((value) => conditionLabels[value] || (typeof value === 'string' && !/^[a-z_]+$/.test(value) ? value : null)).filter(Boolean);
+      if (conditions.length) card.append(node('p', 'review-note', `Условия: ${conditions.join(' ')}`));
+      const limitations = Array.isArray(context.limitations) ? context.limitations.filter((value) => typeof value === 'string') : [];
+      limitations.forEach((limitation) => card.append(node('p', 'review-note', limitation)));
+    }
     return card;
+  }
+
+  function renderModelNote(event, demo) {
+    const note = node('div');
+    if (demo) return note;
+    if (event.type_id && Number.isFinite(event.type_confidence)) {
+      const score = Math.max(0, Math.min(1, event.type_confidence));
+      note.append(node('p', 'review-note', `Оценка предполагаемого типа: ${(score * 100).toLocaleString('ru-RU', { maximumFractionDigits: 1 })}%. Это оценка модели без калибровки, а не вероятность нарушения или измеренная точность.`));
+    }
+    if (event.description_source === 'class_template') {
+      note.append(node('p', 'review-note', 'Описание сформировано по предполагаемому типу действия. Сопоставьте его с кадрами и видео: модель может ошибиться в действии или его контексте.'));
+    }
+    return note;
   }
 
   function renderResult(job, { demo = false } = {}) {
@@ -409,7 +452,7 @@
         eventButtons.forEach((button, i) => button.setAttribute('aria-current', String(i === index)));
         timeButtons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
         detail.replaceChildren();
-        detail.append(node('span', 'section-index', `СОБЫТИЕ ${String(index + 1).padStart(2, '0')} / ${String(events.length).padStart(2, '0')}`), node('h3', 'event-detail-title', event.type), node('p', 'event-description', event.description), renderGallery(event, demo), renderSource(event, demo));
+        detail.append(node('span', 'section-index', `СОБЫТИЕ ${String(index + 1).padStart(2, '0')} / ${String(events.length).padStart(2, '0')}`), node('h3', 'event-detail-title', event.type), renderModelNote(event, demo), node('p', 'event-description', event.description), renderGallery(event, demo), renderSource(event, demo));
         announcement.textContent = `Выбрано событие ${index + 1}: ${event.type}, ${timecode(event.timecode_sec)}`;
         if (jump && !demo) seek(event.timecode_sec);
       };
@@ -451,7 +494,7 @@
       $('demo-events').setAttribute('aria-pressed', String(scenario === 'events'));
       $('demo-empty').setAttribute('aria-pressed', String(scenario === 'empty'));
       if (['demo-events', 'demo-empty'].includes(focusedControl)) $(focusedControl).focus({ preventScroll: true });
-      if (scroll) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (scroll) panel.scrollIntoView(scrollOptions('start'));
     } catch {
       showState('Пример не загрузился', 'Обновите страницу и попробуйте открыть пример ещё раз.', 'error');
     } finally {
@@ -471,7 +514,7 @@
     startButton.disabled = true;
     fileError('');
     resetResult();
-    $('workspace').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('workspace').scrollIntoView(scrollOptions('start'));
     input.focus({ preventScroll: true });
   });
 
@@ -484,7 +527,7 @@
     progress.value = 0;
     setBusy(true);
     showState('Загружаем видео', 'Передаём запись на локальный сервер. Не закрывайте страницу.');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    panel.scrollIntoView(scrollOptions('center'));
     const started = Date.now();
     $('elapsed-time').textContent = '00:00';
     timer = setInterval(() => {
@@ -514,8 +557,9 @@
 
   startButton.addEventListener('click', analyze);
   $('retry-button').addEventListener('click', analyze);
-  window.addEventListener('pagehide', () => {
+  window.addEventListener('pagehide', (event) => {
     clearInterval(timer);
-    clearPreview();
+    if (event.persisted) preview?.pause();
+    else clearPreview();
   });
 })();

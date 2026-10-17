@@ -1,0 +1,683 @@
+{
+  "schema_version": 1,
+  "catalog_version": "2026-10-17.1",
+  "verified_at": "2026-10-17",
+  "purpose": "Offline reference catalog for experimental action predictions and human review; not a legal verdict.",
+  "taxonomy_provenance": {
+    "status": "human_action_notes_confirmed_in_conversation",
+    "workbook": "dataset_review_merged_ml.xlsx",
+    "sheet": "Проверка видео",
+    "columns": [
+      "H",
+      "J"
+    ],
+    "workbook_sha256": "f5793b7117e088306016fbbacf8d9f31a5fab3bb1c31a8566880f4d0707958f2",
+    "confirmation": "Пользователь подтвердил H/J как окончательную разметку действий в текущем разговоре; старые указания книги о готовности не заменяют это подтверждение.",
+    "legal_mapping_is_separately_verified": true
+  },
+  "usage_constraints": [
+    "A binary detector or unknown action type must return an unmapped rule_source.",
+    "An action prediction is not proof that applicability_required facts hold; show the related conditions and limitations to the reviewer.",
+    "Never turn related_rule_ids into direct rule_source; internal_policy_required and context_required remain unmapped until the missing facts/policy are supplied.",
+    "Do not invent scene details from human target notes; observed_action_template is a conservative class-level template, not an independent description of this video.",
+    "No face identification, audio, cloud inference or network legal lookups are required at runtime.",
+    "Only public normative text was sent to research services. Videos, frames and private scene narratives were not sent."
+  ],
+  "excluded_repealed_sources": [
+    {
+      "document": "Постановление Правления НБРК от 03.03.2001 № 58",
+      "url": "https://adilet.zan.kz/rus/docs/V010001482_",
+      "status": "repealed",
+      "replacement": "cash_operations_231",
+      "reason": "Не использовать старые прямые формулировки о ключах как действующее право."
+    },
+    {
+      "document": "Постановление Правления НБРК от 27.03.2018 № 48",
+      "url": "https://adilet.zan.kz/rus/docs/V1800016772",
+      "status": "repealed",
+      "replacement": "information_security_53",
+      "reason": "Отменено постановлением АРРФР от 03.04.2026 № 53; не использовать старую редакцию требований ИБ."
+    }
+  ],
+  "documents": {
+    "cash_operations_231": {
+      "document": "Правила осуществления кассовых операций, постановление Правления НБРК от 29.11.2019 № 231",
+      "full_title": "Об утверждении Правил осуществления кассовых операций и операций по инкассации банкнот, монет и ценностей в банках второго уровня, филиалах банков-нерезидентов Республики Казахстан, Национальном операторе почты и юридических лицах, исключительной деятельностью которых является инкассация банкнот, монет и ценностей",
+      "official_name": "Постановление Правления Национального Банка Республики Казахстан от 29 ноября 2019 года № 231. Зарегистрировано в Министерстве юстиции Республики Казахстан 3 декабря 2019 года № 19680.",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680",
+      "primary_metadata_url": "https://adilet.zan.kz/api/documents/by-ngr/V1900019680?language=rus",
+      "primary_content_url": "https://adilet.zan.kz/api/documents/c4cd4052-63e3-475b-ba9e-93f23de13fdb/content",
+      "primary_versions_url": "https://adilet.zan.kz/api/documents/c4cd4052-63e3-475b-ba9e-93f23de13fdb/versions?page=1&page_size=100",
+      "source_document_id": "c4cd4052-63e3-475b-ba9e-93f23de13fdb",
+      "source_status": "upd",
+      "source_is_current": true,
+      "source_revision_timestamp": "2026-07-11T18:00:00.000Z",
+      "verified_at": "2026-10-17",
+      "verification": "full_current_primary_text_and_official_version_list",
+      "content_sha256_utf8": "1798a349b2326ba4c32a007a62db532ea6de906e71f0249a9de8dc81aa915de8",
+      "scope": "Банки второго уровня РК, филиалы банков-нерезидентов и иные прямо перечисленные в Правилах субъекты."
+    },
+    "premises_14": {
+      "document": "Правила организации охраны и устройства помещений, постановление Правления НБРК от 24.02.2020 № 14",
+      "full_title": "Об утверждении Правил организации охраны и устройства помещений банков второго уровня, филиалов банков-нерезидентов Республики Казахстан, Национального оператора почты, юридических лиц, исключительной деятельностью которых является инкассация банкнот, монет и ценностей, и юридических лиц, осуществляющих деятельность исключительно через обменные пункты на основании лицензии Национального Банка Республики Казахстан на обменные операции с наличной иностранной валютой",
+      "official_name": "Постановление Правления Национального Банка Республики Казахстан от 24 февраля 2020 года № 14. Зарегистрировано в Министерстве юстиции Республики Казахстан 27 февраля 2020 года № 20075.",
+      "url": "https://adilet.zan.kz/rus/docs/V2000020075",
+      "primary_metadata_url": "https://adilet.zan.kz/api/documents/by-ngr/V2000020075?language=rus",
+      "primary_content_url": "https://adilet.zan.kz/api/documents/4bd1c354-b40c-4b38-ab7d-53aaa7b4f39c/content",
+      "primary_versions_url": "https://adilet.zan.kz/api/documents/4bd1c354-b40c-4b38-ab7d-53aaa7b4f39c/versions?page=1&page_size=100",
+      "source_document_id": "4bd1c354-b40c-4b38-ab7d-53aaa7b4f39c",
+      "source_status": "upd",
+      "source_is_current": true,
+      "source_revision_timestamp": "2024-12-23T18:00:00.000Z",
+      "verified_at": "2026-10-17",
+      "verification": "full_current_primary_text_and_official_version_list",
+      "content_sha256_utf8": "89b91567941acfa3d4fca1d374f04b1716cdf20fab43bd4d50ca7074b17ee16d",
+      "scope": "Банки второго уровня РК, филиалы банков-нерезидентов и иные прямо перечисленные в Правилах субъекты."
+    },
+    "information_security_53": {
+      "document": "Требования к обеспечению информационной безопасности банков, постановление Правления АРРФР от 03.04.2026 № 53",
+      "full_title": "Об утверждении Требований к обеспечению информационной безопасности банков, филиалов банков-нерезидентов Республики Казахстан и организаций, осуществляющих отдельные виды банковских операций",
+      "official_name": "Постановление Правления Агентства Республики Казахстан по регулированию и развитию финансового рынка от 3 апреля 2026 года № 53. Зарегистрировано в Министерстве юстиции Республики Казахстан 6 апреля 2026 года № 38336",
+      "url": "https://adilet.zan.kz/rus/docs/V2600038336",
+      "primary_metadata_url": "https://adilet.zan.kz/api/documents/by-ngr/V2600038336?language=rus",
+      "primary_content_url": "https://adilet.zan.kz/api/documents/315d5902-73a2-45bf-a03d-05bdb8e1db76/content",
+      "primary_versions_url": "https://adilet.zan.kz/api/documents/315d5902-73a2-45bf-a03d-05bdb8e1db76/versions?page=1&page_size=100",
+      "source_document_id": "315d5902-73a2-45bf-a03d-05bdb8e1db76",
+      "source_status": "new",
+      "source_is_current": true,
+      "source_revision_timestamp": "2026-04-02T18:00:00.000Z",
+      "verified_at": "2026-10-17",
+      "verification": "full_current_primary_text_and_official_version_list",
+      "content_sha256_utf8": "8d3ffc326265de22e160bcee437c58d5aa954951ab7922db2cd596089b07898c",
+      "scope": "Банки второго уровня РК, филиалы банков-нерезидентов и иные прямо перечисленные в Правилах субъекты."
+    }
+  },
+  "rules": {
+    "cash231.personal_items": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 12",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z81",
+      "summary": "Личные вещи работников хранят вне кассового узла по внутреннему порядку.",
+      "applicability": "Подтверждены принадлежность вещей работнику и нахождение места в кассовом узле.",
+      "exceptions_and_limits": [],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.receive_identity": {
+      "document_id": "cash_operations_231",
+      "section": "подпункт 1) пункта 19",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z444",
+      "summary": "При приёме наличных кассир идентифицирует вносителя по удостоверяющим данным.",
+      "applicability": "Приём наличных от клиента; наблюдается полная последовательность проверки.",
+      "exceptions_and_limits": [
+        "Допустим сервис цифровых документов; отсутствие бумажного документа не доказывает отсутствие идентификации.",
+        "Не разрешает распознавать лицо, устанавливать личность человека по внешности или читать персональные данные."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.receive_count": {
+      "document_id": "cash_operations_231",
+      "section": "подпункт 2) пункта 19",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z445",
+      "summary": "Принимаемые банкноты пересчитывают полистно и проверяют.",
+      "applicability": "Приём наличных от клиента, видны банкноты и ход приёма.",
+      "exceptions_and_limits": [
+        "Правило для приёма нельзя автоматически переносить на внутреннюю передачу запечатанного мешка или выдачу целых упаковок."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.client_presence": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 20, часть первая",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z111",
+      "summary": "Приём и пересчёт выполняют в присутствии клиента.",
+      "applicability": "Приём или пересчёт денег клиента продолжается после его ухода.",
+      "exceptions_and_limits": [
+        "Уход после завершённого приёма/пересчёта сам по себе не подтверждает нарушение."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.accepted_cash_storage": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 20, часть вторая",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z112",
+      "summary": "Ранее принятые деньги хранят в закрывающихся на ключ устройствах отдельно от денег текущего клиента.",
+      "applicability": "Установлено, что деньги ранее приняты и не относятся к текущей операции.",
+      "exceptions_and_limits": [
+        "Допускаются металлический шкаф, сейф, тележка, ящик стола или тумба; требование не сводится только к сейфу.",
+        "Деньги текущего клиента могут находиться на рабочем месте кассира."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.cashier_presence": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 22",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z114",
+      "summary": "Кассир остаётся на месте до окончания обслуживания клиента.",
+      "applicability": "Именно кассир ушёл во время незавершённого обслуживания клиента.",
+      "exceptions_and_limits": [
+        "Не относится автоматически к уходу после работы или к уходу клиента."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.collector_cover_document": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 24, подпункт 1)",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z119",
+      "summary": "При инкассаторской доставке проверяют сведения препроводительного документа.",
+      "applicability": "Подтверждён приём от подразделения инкассации или инкассаторской организации.",
+      "exceptions_and_limits": [
+        "Личность коллеги и вид передачи по одному мешку не устанавливаются; это не универсальное требование показать удостоверение."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.payout": {
+      "document_id": "cash_operations_231",
+      "section": "подпункты 3), 4) пункта 31",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z453",
+      "summary": "Подготовленную сумму пересчитывают при клиенте и выдают ему.",
+      "applicability": "Подтверждена выдача наличных клиенту, известна подлежащая выдаче сумма.",
+      "exceptions_and_limits": [
+        "Количество видимых пачек не доказывает сумму или присвоение; нужны расходный документ и контекст операции.",
+        "Пункт 32 допускает выдачу целых неповреждённых упаковок без полистного пересчёта."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.counting_equipment": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 41",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z162",
+      "summary": "Пересчёт и сортировку проводят на оборудовании с проверкой двух машиночитаемых признаков.",
+      "applicability": "Подтверждена операция пересчёта/сортировки наличных банком.",
+      "exceptions_and_limits": [
+        "Марка устройства и функции проверки по общему видеоплану могут быть неразличимы; отсутствие конкретного счётчика не доказывает отсутствие допустимого оборудования."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.sorting": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 43",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z164",
+      "summary": "Банкноты сортируют по номиналу и пригодности.",
+      "applicability": "Подтверждена сортировка и установлена категория пригодности банкноты.",
+      "exceptions_and_limits": [
+        "Отбраковка машиной может означать ошибку подачи; видео не устанавливает подлинность или платежность."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.payment_fitness": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 57",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z196",
+      "summary": "Платежность проверяют по Правилам НБРК № 230.",
+      "applicability": "Кассовая операция с национальной валютой; необходима проверка статуса банкноты.",
+      "exceptions_and_limits": [
+        "Отдельная проверка только ультрафиолетом не установлена этим пунктом как универсальный достаточный способ."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.suspect_expertise": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 59",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z198",
+      "summary": "Для сомнительных банкнот оформляют приём на экспертизу.",
+      "applicability": "Банкнота действительно признана сомнительной, а не просто отклонена механизмом подачи.",
+      "exceptions_and_limits": [],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.recorded_cash_storage": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 74",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z220",
+      "summary": "Учтённые деньги хранят в кладовой/сейфовой комнате по внутреннему порядку.",
+      "applicability": "Подтверждены учёт наличных и их передача на хранение; порядок банка известен.",
+      "exceptions_and_limits": [
+        "Обычный сейф у стола и отдельная сейфовая комната — разные объекты."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.vault_access": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 75",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z221",
+      "summary": "Доступ в кладовую/сейфовую комнату ограничен уполномоченными лицами.",
+      "applicability": "Место действительно является кладовой/сейфовой комнатой; полномочия установлены независимо от внешности.",
+      "exceptions_and_limits": [
+        "Незнакомый человек не равнозначен неуполномоченному; распознавание личности по лицу запрещено проектом."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "cash231.keys_internal_procedure": {
+      "document_id": "cash_operations_231",
+      "section": "пункт 80",
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680#z226",
+      "summary": "Внутренние документы регулируют ключи и исключают несанкционированное использование.",
+      "applicability": "Нужны действующие внутренние правила банка о ключах/замках.",
+      "exceptions_and_limits": [
+        "Публичный пункт не содержит универсального прямого запрета оставлять ключ в скважине любого сейфа."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "premises14.cash_room_door": {
+      "document_id": "premises_14",
+      "section": "подпункт 1) пункта 16",
+      "url": "https://adilet.zan.kz/rus/docs/V2000020075#z121",
+      "summary": "Касса имеет отдельный вход с запираемой дверью.",
+      "applicability": "Это помещение кассы, на которое распространяются Правила № 14.",
+      "exceptions_and_limits": [
+        "Это требование к устройству помещения, а не самостоятельный запрет держать каждую дверь открытой во время любого действия."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    },
+    "infosec53.inactive_workstation": {
+      "document_id": "information_security_53",
+      "section": "подпункт 9) пункта 71",
+      "url": "https://adilet.zan.kz/rus/docs/V2600038336#z239",
+      "summary": "После более 30 минут неактивности сеанс завершается или рабочее устройство блокируется.",
+      "applicability": "Непрерывно установлена неактивность пользователя дольше 30 минут и отсутствие блокировки.",
+      "exceptions_and_limits": [
+        "Короткое видео с открытым файлом не устанавливает превышение 30 минут; требование немедленного ручного закрытия файла этим пунктом не задано."
+      ],
+      "verified_at": "2026-10-17",
+      "source_status": "verified_primary_current"
+    }
+  },
+  "types": {
+    "cash_not_fully_delivered": {
+      "label": "Неполная выдача суммы",
+      "observed_action_template": "При выдаче часть подготовленных банкнот передана посетителю, другая часть осталась у кассира.",
+      "review_reason": "Проверить соответствие подготовленной и выданной суммы расходному документу.",
+      "rule_ids": [
+        "cash231.payout"
+      ],
+      "related_rule_ids": [],
+      "applicability_required": [
+        "cash_payout",
+        "amount_due_established"
+      ],
+      "limitations": [
+        "Не утверждать присвоение или точную долю суммы по числу видимых банкнот."
+      ],
+      "source_status": "verified_conditional",
+      "rule_source": {
+        "status": "provided",
+        "document": "Правила осуществления кассовых операций, постановление Правления НБРК от 29.11.2019 № 231",
+        "section": "подпункты 3), 4) пункта 31",
+        "url": "https://adilet.zan.kz/rus/docs/V1900019680#z453"
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "customer_identity_not_presented": {
+      "label": "Документы клиента не представлены",
+      "observed_action_template": "При передаче наличных клиентом предъявление и проверка удостоверяющих данных не наблюдаются.",
+      "review_reason": "Проверить, выполнена ли идентификация при приёме наличных, включая цифровой способ.",
+      "rule_ids": [
+        "cash231.receive_identity"
+      ],
+      "related_rule_ids": [],
+      "applicability_required": [
+        "customer_cash_receipt",
+        "complete_identity_check_sequence"
+      ],
+      "limitations": [
+        "Бумажный документ может быть заменён допустимым цифровым документом; проверка может находиться вне кадра."
+      ],
+      "source_status": "verified_conditional",
+      "rule_source": {
+        "status": "provided",
+        "document": "Правила осуществления кассовых операций, постановление Правления НБРК от 29.11.2019 № 231",
+        "section": "подпункт 1) пункта 19",
+        "url": "https://adilet.zan.kz/rus/docs/V1900019680#z444"
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "accepted_cash_left_exposed": {
+      "label": "Деньги оставлены вне защищённого хранения",
+      "observed_action_template": "Ранее принятые банкноты или мешок с ними остаются на рабочей поверхности после перехода к другому действию.",
+      "review_reason": "Проверить, что ранее принятые деньги убраны в запираемое устройство.",
+      "rule_ids": [
+        "cash231.accepted_cash_storage"
+      ],
+      "related_rule_ids": [
+        "cash231.recorded_cash_storage"
+      ],
+      "applicability_required": [
+        "cash_already_accepted",
+        "not_current_customer_cash"
+      ],
+      "limitations": [
+        "Само нахождение денег текущего клиента на столе допустимо; размещение именно в сейфе не единственный вариант."
+      ],
+      "source_status": "verified_conditional",
+      "rule_source": {
+        "status": "provided",
+        "document": "Правила осуществления кассовых операций, постановление Правления НБРК от 29.11.2019 № 231",
+        "section": "пункт 20, часть вторая",
+        "url": "https://adilet.zan.kz/rus/docs/V1900019680#z112"
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "equipment_left_on": {
+      "label": "Оборудование оставлено включённым",
+      "observed_action_template": "После ухода сотрудника экран или оборудование остаются включёнными.",
+      "review_reason": "Нужны внутренний порядок завершения смены и требования эксплуатации оборудования.",
+      "rule_ids": [],
+      "related_rule_ids": [],
+      "applicability_required": [],
+      "limitations": [
+        "Включённый экран не доказывает опасный режим работы или обязанность выключить всё оборудование."
+      ],
+      "source_status": "internal_policy_required",
+      "rule_source": {
+        "status": "unmapped",
+        "document": null,
+        "reason": "Прямое применимое нормативное основание не установлено: Нужны внутренний порядок завершения смены и требования эксплуатации оборудования."
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "cash_counting_omitted": {
+      "label": "Пересчёт банкнот пропущен",
+      "observed_action_template": "После извлечения банкнот из мешка они перемещены дальше без наблюдаемого пересчёта.",
+      "review_reason": "Проверить операцию пересчёта и применение оборудования с требуемыми защитными функциями.",
+      "rule_ids": [
+        "cash231.counting_equipment"
+      ],
+      "related_rule_ids": [
+        "cash231.receive_count"
+      ],
+      "applicability_required": [
+        "cash_recount_or_sorting_operation",
+        "complete_counting_sequence"
+      ],
+      "limitations": [
+        "Пункт 32 допускает выдачу целых неповреждённых упаковок без полистного пересчёта; ручной жест не определяет функции оборудования."
+      ],
+      "source_status": "verified_conditional",
+      "rule_source": {
+        "status": "provided",
+        "document": "Правила осуществления кассовых операций, постановление Правления НБРК от 29.11.2019 № 231",
+        "section": "пункт 41",
+        "url": "https://adilet.zan.kz/rus/docs/V1900019680#z162"
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "collector_documents_not_presented": {
+      "label": "Документы передающего денежный мешок не представлены",
+      "observed_action_template": "Мешок передан кассовому работнику; предъявление сопроводительных документов в последовательности не наблюдается.",
+      "review_reason": "Требуется установить вид передачи и проверить препроводительный документ; коллега не обязательно инкассатор.",
+      "rule_ids": [],
+      "related_rule_ids": [
+        "cash231.collector_cover_document"
+      ],
+      "applicability_required": [
+        "collector_delivery_established",
+        "document_kind_established"
+      ],
+      "limitations": [
+        "Пункт 24 относится к инкассаторской доставке и не равен общему требованию показать удостоверение любому коллеге."
+      ],
+      "source_status": "context_required",
+      "rule_source": {
+        "status": "unmapped",
+        "document": null,
+        "reason": "Прямое применимое нормативное основание не установлено: Требуется установить вид передачи и проверить препроводительный документ; коллега не обязательно инкассатор."
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "simultaneous_customer_service": {
+      "label": "Одновременное обслуживание клиентов",
+      "observed_action_template": "Обслуживание второго посетителя начинается до наблюдаемого окончания операции первого.",
+      "review_reason": "Нужно проверить, смешиваются ли операции или деньги разных клиентов; общий запрет двух посетителей публичной нормой не подтверждён.",
+      "rule_ids": [],
+      "related_rule_ids": [
+        "cash231.accepted_cash_storage"
+      ],
+      "applicability_required": [],
+      "limitations": [
+        "Не объявлять нарушение только по одновременному присутствию двух людей."
+      ],
+      "source_status": "context_required",
+      "rule_source": {
+        "status": "unmapped",
+        "document": null,
+        "reason": "Прямое применимое нормативное основание не установлено: Нужно проверить, смешиваются ли операции или деньги разных клиентов; общий запрет двух посетителей публичной нормой не подтверждён."
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "safe_left_open": {
+      "label": "Сейф оставлен открытым",
+      "observed_action_template": "После действий с сейфом сотрудник отходит; дверца остаётся открытой.",
+      "review_reason": "Нужны сведения о содержимом, стадии операции и внутренний порядок запирания сейфа.",
+      "rule_ids": [],
+      "related_rule_ids": [
+        "cash231.accepted_cash_storage",
+        "cash231.keys_internal_procedure"
+      ],
+      "applicability_required": [],
+      "limitations": [
+        "Открытая дверца сама по себе не доказывает нарушение пункта 20, если деньги ещё относятся к текущей операции."
+      ],
+      "source_status": "internal_policy_required",
+      "rule_source": {
+        "status": "unmapped",
+        "document": null,
+        "reason": "Прямое применимое нормативное основание не установлено: Нужны сведения о содержимом, стадии операции и внутренний порядок запирания сейфа."
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "safe_key_left_in_lock": {
+      "label": "Ключ оставлен в замке сейфа",
+      "observed_action_template": "После завершения действий сотрудник отходит, видимый ключ остаётся в замке сейфа.",
+      "review_reason": "Для прямого вывода нужен внутренний порядок хранения ключей банка.",
+      "rule_ids": [],
+      "related_rule_ids": [
+        "cash231.keys_internal_procedure"
+      ],
+      "applicability_required": [],
+      "limitations": [
+        "Не применять отменённое постановление НБРК от 03.03.2001 № 58 как действующее основание."
+      ],
+      "source_status": "internal_policy_required",
+      "rule_source": {
+        "status": "unmapped",
+        "document": null,
+        "reason": "Прямое применимое нормативное основание не установлено: Для прямого вывода нужен внутренний порядок хранения ключей банка."
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "unsecured_storage_on_departure": {
+      "label": "Уход с рабочего места с незапертым сейфом",
+      "observed_action_template": "После работы с сейфом сотрудник покидает рабочее место; запирание в наблюдаемой последовательности не видно.",
+      "review_reason": "Нужны тип замка и внутренний порядок; уход после работы не равен уходу во время обслуживания клиента.",
+      "rule_ids": [],
+      "related_rule_ids": [
+        "cash231.keys_internal_procedure",
+        "cash231.cashier_presence"
+      ],
+      "applicability_required": [],
+      "limitations": [
+        "Отсутствие видимого поворота ключа не исключает автоматическое запирание."
+      ],
+      "source_status": "internal_policy_required",
+      "rule_source": {
+        "status": "unmapped",
+        "document": null,
+        "reason": "Прямое применимое нормативное основание не установлено: Нужны тип замка и внутренний порядок; уход после работы не равен уходу во время обслуживания клиента."
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "workstation_information_left_open": {
+      "label": "Информация оставлена открытой",
+      "observed_action_template": "Сотрудник отходит от рабочего места, экран с открытым окном остаётся видимым.",
+      "review_reason": "Нужны внутренние правила блокировки экрана и установленный вид защищаемой информации.",
+      "rule_ids": [],
+      "related_rule_ids": [
+        "infosec53.inactive_workstation"
+      ],
+      "applicability_required": [],
+      "limitations": [
+        "Не читать и не публиковать персональные данные на экране; открытое окно не доказывает раскрытие банковской тайны.",
+        "Пункт 71(9) Требований № 53 задаёт автоматическую блокировку после более 30 минут неактивности; короткий ролик такого срока не доказывает."
+      ],
+      "source_status": "internal_policy_required",
+      "rule_source": {
+        "status": "unmapped",
+        "document": null,
+        "reason": "Прямое применимое нормативное основание не установлено: Нужны внутренние правила блокировки экрана и установленный вид защищаемой информации."
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "cash_office_door_left_open": {
+      "label": "Дверь кассового кабинета оставлена открытой",
+      "observed_action_template": "После прохода сотрудника дверь помещения остаётся открытой.",
+      "review_reason": "Нужно установить назначение помещения, режим доступа и внутренний порядок закрывания двери.",
+      "rule_ids": [],
+      "related_rule_ids": [
+        "premises14.cash_room_door",
+        "cash231.vault_access"
+      ],
+      "applicability_required": [],
+      "limitations": [
+        "Требование иметь запираемую дверь не доказывает обязанность запирать её в данный момент; полномочия человека нельзя выводить из внешности."
+      ],
+      "source_status": "internal_policy_required",
+      "rule_source": {
+        "status": "unmapped",
+        "document": null,
+        "reason": "Прямое применимое нормативное основание не установлено: Нужно установить назначение помещения, режим доступа и внутренний порядок закрывания двери."
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "customer_departed_before_completion": {
+      "label": "Клиент ушёл до завершения операции",
+      "observed_action_template": "Посетитель уходит после передачи наличных до наблюдаемого окончания их приёма или пересчёта.",
+      "review_reason": "Проверить, продолжались ли приём или пересчёт после ухода клиента.",
+      "rule_ids": [
+        "cash231.client_presence"
+      ],
+      "related_rule_ids": [],
+      "applicability_required": [
+        "customer_cash_receipt_or_counting_continues",
+        "customer_absent"
+      ],
+      "limitations": [
+        "Пункт 22 ограничивает уход кассира, а не клиента; не подменять им пункт 20."
+      ],
+      "source_status": "verified_conditional",
+      "rule_source": {
+        "status": "provided",
+        "document": "Правила осуществления кассовых операций, постановление Правления НБРК от 29.11.2019 № 231",
+        "section": "пункт 20, часть первая",
+        "url": "https://adilet.zan.kz/rus/docs/V1900019680#z111"
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "personal_items_on_cash_desk": {
+      "label": "Личные вещи на кассовом столе",
+      "observed_action_template": "Сотрудник оставляет личную одежду или сумку на рабочем столе в кассовой зоне.",
+      "review_reason": "Проверить хранение личных вещей внутри кассового узла.",
+      "rule_ids": [
+        "cash231.personal_items"
+      ],
+      "related_rule_ids": [],
+      "applicability_required": [
+        "cash_node_location_confirmed",
+        "employee_personal_items_confirmed"
+      ],
+      "limitations": [
+        "Нужна уверенность, что это личные вещи сотрудника, а не передаваемые ценности."
+      ],
+      "source_status": "verified_conditional",
+      "rule_source": {
+        "status": "provided",
+        "document": "Правила осуществления кассовых операций, постановление Правления НБРК от 29.11.2019 № 231",
+        "section": "пункт 12",
+        "url": "https://adilet.zan.kz/rus/docs/V1900019680#z81"
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "rejected_banknote_recombined_without_check": {
+      "label": "Отклонённая банкнота возвращена без проверки",
+      "observed_action_template": "Банкнота из отводящего лотка оборудования возвращается к основной пачке без наблюдаемой дополнительной проверки.",
+      "review_reason": "Проверить причину отвода, платежность и сортировку банкноты.",
+      "rule_ids": [
+        "cash231.payment_fitness",
+        "cash231.sorting"
+      ],
+      "related_rule_ids": [
+        "cash231.suspect_expertise"
+      ],
+      "applicability_required": [
+        "national_currency_cash_operation",
+        "banknote_assessment_needed"
+      ],
+      "limitations": [
+        "Отвод может быть вызван ошибкой подачи; нельзя объявлять банкноту поддельной или неплатежной по лотку.",
+        "Не утверждать, что только УФ-проверка обязательна или достаточна."
+      ],
+      "source_status": "verified_conditional",
+      "rule_source": {
+        "status": "provided",
+        "document": "Правила осуществления кассовых операций, постановление Правления НБРК от 29.11.2019 № 231",
+        "section": "пункт 57; пункт 43",
+        "url": "https://adilet.zan.kz/rus/docs/V1900019680#z196"
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    },
+    "customer_cash_combined": {
+      "label": "Банкноты разных клиентов объединены",
+      "observed_action_template": "Банкноты, ранее принятые от одного посетителя, объединяются с банкнотами следующего посетителя на рабочем месте.",
+      "review_reason": "Проверить раздельное хранение ранее принятых денег и денег текущего клиента.",
+      "rule_ids": [
+        "cash231.accepted_cash_storage"
+      ],
+      "related_rule_ids": [],
+      "applicability_required": [
+        "distinct_customer_cash_sequences",
+        "earlier_cash_already_accepted"
+      ],
+      "limitations": [
+        "Объединение банкнот одного клиента по завершённой операции само по себе не равно смешению разных клиентов."
+      ],
+      "source_status": "verified_conditional",
+      "rule_source": {
+        "status": "provided",
+        "document": "Правила осуществления кассовых операций, постановление Правления НБРК от 29.11.2019 № 231",
+        "section": "пункт 20, часть вторая",
+        "url": "https://adilet.zan.kz/rus/docs/V1900019680#z112"
+      },
+      "verified_at": "2026-10-17",
+      "human_review_required": true
+    }
+  }
+}

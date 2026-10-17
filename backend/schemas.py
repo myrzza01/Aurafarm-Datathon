@@ -68,6 +68,10 @@ class UnmappedRuleSource(BaseModel):
 
 class Violation(BaseModel):
     type: str = Field(min_length=1, max_length=200)
+    type_id: str | None = Field(default=None, max_length=200)
+    type_confidence: float | None = Field(default=None, ge=0, le=1, allow_inf_nan=False)
+    description_source: Literal["class_template"] | None = None
+    rule_context: dict | None = None
     timecode_sec: float = Field(ge=0, allow_inf_nan=False)
     description: str = Field(min_length=1, max_length=5000)
     evidence_frames: list[EvidenceFrame] = Field(min_length=1, max_length=3)

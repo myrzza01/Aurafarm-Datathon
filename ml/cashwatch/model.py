@@ -9,7 +9,7 @@ MODEL_NAME = "mobilenetv3_small_100.lamb_in1k"
 
 
 class VideoDetector(nn.Module):
-    def __init__(self, pretrained=False, head_type="temporal"):
+    def __init__(self, pretrained=False, head_type="temporal", action_classes=0):
         super().__init__()
         self.encoder = timm.create_model(MODEL_NAME, pretrained=pretrained, num_classes=0)
         features = self.encoder.conv_head.out_channels
@@ -23,6 +23,10 @@ class VideoDetector(nn.Module):
             self.temporal = nn.Linear(features, 1)
         elif head_type != "temporal":
             raise ValueError("Unknown detector head")
+        self.action_classes = int(action_classes)
+        if self.action_classes:
+            self.action_head = nn.Sequential(nn.Linear(features * 2, 128), nn.GELU(),
+                nn.Dropout(0.35), nn.Linear(128, self.action_classes))
         self.register_buffer("mean", torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1))
         self.register_buffer("std", torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1))
 
@@ -59,6 +63,14 @@ class VideoDetector(nn.Module):
         batch, length, channels, height, width = clips.shape
         features = self.encode(clips.reshape(batch * length, channels, height, width))
         return self.classify(features.reshape(batch, length, -1))
+
+    def classify_actions(self, embeddings):
+        """Supervised visual action logits; no filename or annotation inputs."""
+        if not self.action_classes:
+            raise ValueError("This checkpoint has no trained action classifier")
+        features = self.normalization(embeddings)
+        motion = (features[:, 1:] - features[:, :-1]).abs().mean(dim=1)
+        return self.action_head(torch.cat([features.mean(dim=1), motion], dim=-1))
 
 
 def select_device(requested="auto"):

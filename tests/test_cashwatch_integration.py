@@ -23,6 +23,17 @@ def test_shipped_detector_is_available_without_configuration(monkeypatch):
     assert not analyzer_configured()
 
 
+def test_health_capability_follows_weights_not_filename(tmp_path, monkeypatch):
+    import shutil
+    from backend.cashwatch_adapter import analyzer_kind, DEFAULT_CHECKPOINT
+    renamed = tmp_path / 'renamed.pt'
+    shutil.copyfile(DEFAULT_CHECKPOINT, renamed)
+    monkeypatch.setenv('CASHWATCH_CHECKPOINT', str(renamed))
+    assert analyzer_kind() == 'semantic'
+    renamed.write_bytes(b'not the attested semantic checkpoint')
+    assert analyzer_kind() == 'custom_checkpoint'
+
+
 def test_unmapped_rule_is_explicit_not_a_fabricated_document():
     import base64
     image = io.BytesIO()
@@ -60,5 +71,9 @@ def test_actual_checkpoint_completes_api_job(tmp_path, mov_bytes, monkeypatch):
         result = AnalysisResult.model_validate(job)
         assert result.verdict in {'violation', 'no_violation'}
         for event in result.violations:
-            assert event.rule_source.status == 'unmapped'
+            assert event.rule_source.status in {'provided', 'unmapped'}
+            if event.type_id:
+                assert 0 <= event.type_confidence <= 1
+                assert event.description_source == 'class_template'
+                assert event.rule_context['source_status']
             assert 1 <= len(event.evidence_frames) <= 3
