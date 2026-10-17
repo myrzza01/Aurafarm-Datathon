@@ -1,0 +1,38 @@
+# Optional full-site Quick Tunnel. Explicitly start/stop it for each demonstration.
+# Combine with compose.yaml and compose.local.yaml; see docs/temporary-access.md.
+services:
+  tunnel-origin:
+    image: caddy:2
+    restart: "no"
+    volumes:
+      - ./deploy/Caddyfile.tunnel:/etc/caddy/Caddyfile:ro
+    networks:
+      - backend
+    depends_on:
+      app:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: "2"
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: "no"
+    command: ["tunnel", "--no-autoupdate", "--protocol", "http2", "--url", "http://tunnel-origin:80"]
+    networks:
+      - public
+      - backend
+    depends_on:
+      tunnel-origin:
+        condition: service_started
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: 5m
+        max-file: "2"

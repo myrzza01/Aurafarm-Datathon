@@ -1,0 +1,26 @@
+# Private origin reached only by cloudflared through Docker networking.
+# Do not publish this listener as a host port: its scheme/IP headers trust the tunnel.
+:80 {
+    @insecure header X-Forwarded-Proto http
+    redir @insecure https://{host}{uri} 308
+    request_body {
+        max_size 106MB
+    }
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy same-origin
+        X-Frame-Options SAMEORIGIN
+        Cache-Control no-store
+        -Server
+    }
+    reverse_proxy app:8000 {
+        # The public TLS connection terminates at Cloudflare's edge.
+        header_up X-Forwarded-Proto https
+        # Cloudflare supplies this visitor header; no public origin port is exposed.
+        header_up X-Forwarded-For {http.request.header.Cf-Connecting-Ip}
+        transport http {
+            dial_timeout 5s
+            response_header_timeout 35s
+        }
+    }
+}
