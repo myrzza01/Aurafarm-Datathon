@@ -1,0 +1,26 @@
+{
+  "fps": 2.0,
+  "image_size": 224,
+  "clip_frames": 8,
+  "positive_radius_sec": 1.0,
+  "seed": 42,
+  "head_type": "linear",
+  "model_name": "mobilenetv3_small_100.lamb_in1k",
+  "stage": "frozen_encoder",
+  "loss": "BCEWithLogitsLoss",
+  "epochs": 20,
+  "batch_size": 8,
+  "samples_per_epoch": 80,
+  "learning_rate": 0.0003,
+  "weight_decay": 0.01,
+  "event_tolerance_sec": 5.0,
+  "event_taxonomy": {
+    "status": "unlabelled",
+    "type_ids": []
+  },
+  "postprocess": {
+    "threshold": 0.6,
+    "merge_gap_sec": 0.6,
+    "min_hits": 1
+  }
+}
