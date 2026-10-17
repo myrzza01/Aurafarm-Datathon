@@ -7,6 +7,7 @@ import pytest
 
 from backend.main import create_app
 from backend.schemas import AnalysisResult
+from tests.helpers import clean_analyzer, wait_job
 
 HEADERS = {"X-UI-Request": "1"}
 USER = {"name": "Тест интерфейса", "email": "reader@example.test", "password": "local-test-password-123"}
@@ -15,7 +16,7 @@ USER = {"name": "Тест интерфейса", "email": "reader@example.test",
 @pytest.fixture
 def app(tmp_path):
     return create_app(
-        lambda path: AnalysisResult(verdict="no_violation", violations=[]),
+        clean_analyzer,
         api_key="test-key", upload_dir=tmp_path / "uploads", auth_db=tmp_path / "accounts.sqlite3",
     )
 
@@ -96,11 +97,11 @@ def test_expired_session_is_rejected(app, tmp_path):
         assert client.get("/auth/api/me").status_code == 401
 
 
-def test_users_cannot_read_each_others_jobs(app):
+def test_users_cannot_read_each_others_jobs(app, mov_bytes):
     with TestClient(app) as first, TestClient(app) as second:
         first.post("/auth/api/register", headers=HEADERS, json=USER)
         second.post("/auth/api/register", headers=HEADERS, json={**USER, "email": "second@example.test"})
-        job = first.post("/app/api/v1/analyze", headers=HEADERS, files={"file": ("test.mov", b"test")}).json()["job_id"]
+        job = first.post("/app/api/v1/analyze", headers=HEADERS, files={"file": ("test.mov", mov_bytes)}).json()["job_id"]
         assert first.get(f"/app/api/v1/jobs/{job}").status_code == 200
         assert second.get(f"/app/api/v1/jobs/{job}").status_code == 404
         assert second.get(f"/api/v1/jobs/{job}").status_code == 401

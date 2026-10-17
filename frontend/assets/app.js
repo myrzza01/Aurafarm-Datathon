@@ -160,7 +160,7 @@
         try { body = JSON.parse(xhr.responseText); }
         catch { reject(new Error('Сервис вернул некорректный ответ. Попробуйте ещё раз.')); return; }
         if (xhr.status >= 200 && xhr.status < 300 && body.job_id) resolve(body.job_id);
-        else reject(new Error(xhr.status === 401 ? 'Сессия истекла. Обновите страницу и повторите загрузку.' : xhr.status === 413 ? 'Размер видео превышает допустимый лимит.' : xhr.status === 415 ? 'Сервис принимает только файлы .mov.' : 'Не удалось загрузить видео. Проверьте файл и повторите попытку.'));
+        else reject(new Error(xhr.status === 401 ? 'Сессия истекла. Обновите страницу и повторите загрузку.' : xhr.status === 413 ? 'Размер видео превышает допустимый лимит.' : [415, 429, 503].includes(xhr.status) && typeof body.detail === 'string' ? body.detail : 'Не удалось загрузить видео. Проверьте файл и повторите попытку.'));
       };
       xhr.onerror = () => reject(new Error('Нет соединения с сервером. Проверьте, что приложение запущено.'));
       xhr.ontimeout = () => reject(new Error('Загрузка заняла слишком много времени. Попробуйте ещё раз.'));
@@ -173,7 +173,7 @@
   const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   async function poll(jobId, currentRun) {
-    const deadline = Date.now() + 290000;
+    const deadline = Date.now() + 295000;
     let networkFailures = 0;
     while (currentRun === runId && Date.now() < deadline) {
       let response;
@@ -319,6 +319,9 @@
     const rule = event.rule_source;
     if (demo) {
       source.textContent = 'В учебном примере нормативный источник не указан. Здесь будет документ и пункт, связанный с событием.';
+    } else if (rule?.status === 'unmapped') {
+      source.textContent = rule.reason;
+      card.append(node('strong', 'review-note', 'Требует классификации и проверки человеком'));
     } else if (rule) {
       source.append(node('strong', '', `${rule.document}${rule.section ? `, ${rule.section}` : ''}`));
       if (rule.url) {
@@ -431,7 +434,7 @@
       container.append(layout);
       selectEvent(0);
     }
-    container.append(node('p', 'review-note', demo ? 'Это только пример интерфейса. Для реального анализа загрузите видео после подключения локальной модели.' : 'Результат — подсказка для проверки человеком. Он не является окончательным юридическим или дисциплинарным заключением.'));
+    container.append(node('p', 'review-note', demo ? 'Это только пример интерфейса. Для реального анализа загрузите собственное видео.' : 'Результат — подсказка для проверки человеком. Он не является окончательным юридическим или дисциплинарным заключением.'));
   }
 
   async function showDemo(scenario = 'events', scroll = true) {

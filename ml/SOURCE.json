@@ -1,0 +1,12 @@
+{
+  "repository": "https://github.com/myrzza01/Aurafarm-Datathon.git",
+  "branch": "feature/ml-video-detector",
+  "commit": "2051a0e008042a3cdb0669371232dc81cab671f0",
+  "default_checkpoint": "weights/detector.pt",
+  "sha256": {
+    "weights/detector.pt": "cce7b34e03e1177c5272b3e83b7cd01e1ab502e1240b921f37060f0b15dd0f02",
+    "weights/temporal_candidate.pt": "ae0fd8880b344f5e7015f733b4ad0d304b790aa11f554fa8eab2d22299b323b0"
+  },
+  "application_adapter": "backend.cashwatch_adapter:analyze_video",
+  "platform_dependencies": "../requirements-ml.txt"
+}

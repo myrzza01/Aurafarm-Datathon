@@ -1,4 +1,5 @@
-import logging
+from contextlib import asynccontextmanager
+import fcntl
 import os
 import secrets
 import sqlite3
@@ -7,18 +8,20 @@ import time
 from threading import Lock
 from pathlib import Path
 from typing import Annotated, Callable
-from uuid import uuid4
 
-from fastapi import BackgroundTasks, Cookie, Depends, FastAPI, HTTPException, Request, Response, UploadFile
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi import Cookie, Depends, FastAPI, HTTPException, Request, Response, UploadFile
+from fastapi.exceptions import RequestValidationError
+from fastapi.openapi.docs import get_swagger_ui_html
+from fastapi.responses import FileResponse, RedirectResponse, JSONResponse
 from fastapi.security import APIKeyHeader
 from fastapi.staticfiles import StaticFiles
 
-from backend.analyzer import AnalyzerNotConfigured, analyze_video
+from backend.analyzer import analyze_video, analyzer_configured, analyzer_spec, DEFAULT_ANALYZER
 from backend.auth import AuthStore, LoginData, RegisterData, SESSION_SECONDS
+from backend.jobs import JobStore, JobRunner, QueueFull
+from backend.media import InvalidVideo, validate_video
 from backend.schemas import AnalysisResult, JobCreated, JobResponse
 
-logger = logging.getLogger(__name__)
 key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 
@@ -28,21 +31,61 @@ def create_app(
     api_key: str | None = None,
     upload_dir: Path | None = None,
     auth_db: Path | None = None,
+    jobs_db: Path | None = None,
     max_upload_bytes: int = 100 * 1024 * 1024,
+    analysis_timeout: float | None = None,
+    max_workers: int | None = None,
+    queue_capacity: int | None = None,
+    result_retention: float | None = None,
 ) -> FastAPI:
     expected_key = api_key or os.environ.get("API_KEY")
     if not expected_key:
         raise RuntimeError("Set API_KEY before starting the server")
     storage = upload_dir or Path("data/uploads")
     storage.mkdir(parents=True, exist_ok=True)
-    jobs: dict[str, JobResponse] = {}
-    job_owners: dict[str, str | None] = {}
-    app = FastAPI(title="ForteBank Video Review API", version="0.1.0")
+    timeout = analysis_timeout if analysis_timeout is not None else float(os.environ.get("ANALYSIS_TIMEOUT_SECONDS", "270"))
+    workers = max_workers if max_workers is not None else int(os.environ.get("ANALYSIS_WORKERS", "1"))
+    capacity = queue_capacity if queue_capacity is not None else int(os.environ.get("ANALYSIS_QUEUE_CAPACITY", "4"))
+    retention = result_retention if result_retention is not None else float(os.environ.get("RESULT_RETENTION_SECONDS", "86400"))
+    if not (0 < timeout <= 290 and 1 <= workers <= 4 and workers <= capacity <= 100 and retention > 0):
+        raise ValueError("Invalid job limits: timeout <= 290s, workers 1..4, capacity workers..100, retention > 0")
+    jobs = JobStore(jobs_db or storage.parent / "jobs.sqlite3")
+    runner = JobRunner(jobs, analyzer, workers, retention, upload_dir=storage)
+
+    @asynccontextmanager
+    async def lifespan(app):
+        runner.start()
+        try:
+            yield
+        finally:
+            runner.close()
+
+    app = FastAPI(title="ForteBank Video Review API", version="0.3.0", lifespan=lifespan, docs_url=None, redoc_url=None)
     frontend = Path(__file__).resolve().parent.parent / "frontend"
     accounts = AuthStore(auth_db or storage.parent / "auth.sqlite3")
     attempts: dict[str, list[float]] = {}
     attempts_lock = Lock()
     app.mount("/assets", StaticFiles(directory=frontend / "assets"), name="assets")
+    app.mount("/docs-assets", StaticFiles(directory=Path(__file__).parent / "static" / "swagger"), name="docs-assets")
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_error(request: Request, exc: RequestValidationError):
+        # Never include Pydantic input/ctx: these may contain a password or model payload.
+        errors = [{"loc": list(error["loc"]), "type": error["type"], "msg": "Некорректное значение поля"} for error in exc.errors()]
+        return JSONResponse(status_code=422, content={"detail": errors})
+
+    @app.get("/docs", include_in_schema=False)
+    def docs():
+        return get_swagger_ui_html(
+            openapi_url="/openapi.json", title=f"{app.title} — Swagger UI",
+            swagger_js_url="/docs-assets/swagger-ui-bundle.js",
+            swagger_css_url="/docs-assets/swagger-ui.css",
+            swagger_favicon_url="/assets/favicon.svg",
+            swagger_ui_parameters={"validatorUrl": None},
+        )
+
+    def model_configured():
+        return analyzer is not analyze_video or analyzer_configured()
 
     def require_key(key: Annotated[str | None, Depends(key_header)]):
         if key is None or not secrets.compare_digest(key.encode(), expected_key.encode()):
@@ -128,25 +171,10 @@ def create_app(
         response = FileResponse(frontend / "index.html", headers={"Cache-Control": "no-store"})
         return response
 
-    def process(job_id: str, video_path: Path):
-        try:
-            result = AnalysisResult.model_validate(analyzer(video_path))
-            jobs[job_id] = JobResponse(
-                job_id=job_id, status="done", **result.model_dump()
-            )
-        except AnalyzerNotConfigured as exc:
-            jobs[job_id] = JobResponse(job_id=job_id, status="failed", error=str(exc))
-        except Exception:
-            logger.exception("Analysis failed for job %s", job_id)
-            jobs[job_id] = JobResponse(
-                job_id=job_id, status="failed", error="Не удалось обработать видео"
-            )
-        finally:
-            video_path.unlink(missing_ok=True)
-
     @app.get("/health")
     def health():
-        return {"status": "ok"}
+        return {"status": "ok", "analyzer_configured": model_configured(),
+                "analyzer_kind": "binary" if analyzer is analyze_video and analyzer_spec() == DEFAULT_ANALYZER else "custom"}
 
     @app.post(
         "/app/api/v1/analyze", response_model=JobCreated, status_code=202,
@@ -156,8 +184,9 @@ def create_app(
         "/api/v1/analyze", response_model=JobCreated, status_code=202,
         dependencies=[Depends(require_key)],
     )
-    def analyze(file: UploadFile, background_tasks: BackgroundTasks, request: Request):
+    def analyze(file: UploadFile, request: Request):
         path = None
+        started = time.monotonic()
         try:
             if Path(file.filename or "").suffix.lower() != ".mov":
                 raise HTTPException(status_code=415, detail="Expected a .mov file")
@@ -171,10 +200,27 @@ def create_app(
                     out.write(chunk)
             if size == 0:
                 raise HTTPException(status_code=400, detail="Empty file")
-            job_id = uuid4().hex
-            jobs[job_id] = JobResponse(job_id=job_id, status="processing")
-            job_owners[job_id] = getattr(request.state, "user", {}).get("id")
-            background_tasks.add_task(process, job_id, path)
+            # One validation process per data directory, shared across API workers.
+            with (storage.parent / "video-validation.lock").open("a") as lock:
+                try:
+                    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except BlockingIOError:
+                    raise HTTPException(status_code=429, detail="Проверяется другой файл. Повторите загрузку позже.", headers={"Retry-After": "2"})
+                try:
+                    validate_video(path)
+                except InvalidVideo as exc:
+                    raise HTTPException(status_code=415, detail=str(exc)) from exc
+                finally:
+                    fcntl.flock(lock, fcntl.LOCK_UN)
+            if not model_configured():
+                raise HTTPException(status_code=503, detail="Локальный анализатор пока не подключён. Обратитесь к команде сервиса.")
+            remaining = timeout - (time.monotonic() - started)
+            if remaining <= 0:
+                raise HTTPException(status_code=408, detail="Проверка файла превысила допустимое время")
+            try:
+                job_id = jobs.submit(path, getattr(request.state, "user", {}).get("id"), remaining, capacity)
+            except QueueFull:
+                raise HTTPException(status_code=429, detail="Очередь анализа заполнена. Попробуйте позже.", headers={"Retry-After": "5"})
             return JobCreated(job_id=job_id)
         except Exception:
             if path is not None:
@@ -194,11 +240,12 @@ def create_app(
     )
     def get_job(job_id: str, request: Request, response: Response):
         response.headers["Cache-Control"] = "no-store"
-        if job_id not in jobs:
+        row = jobs.get(job_id)
+        if not row:
             raise HTTPException(status_code=404, detail="Job not found")
         user = getattr(request.state, "user", None)
-        if user and job_owners.get(job_id) != user["id"]:
+        if user and row["owner"] != user["id"]:
             raise HTTPException(status_code=404, detail="Job not found")
-        return jobs[job_id]
+        return jobs.response(row)
 
     return app

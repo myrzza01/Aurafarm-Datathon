@@ -1,0 +1,5 @@
+# Cross-platform inference dependencies; keep the existing PyAV/Pillow versions.
+torch==2.7.1
+torchvision==0.22.1
+timm==1.0.22
+numpy==2.2.6
