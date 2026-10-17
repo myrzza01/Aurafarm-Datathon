@@ -1,0 +1,70 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    init: true
+    environment:
+      API_KEY: ${API_KEY:?Set API_KEY in .env}
+      CASHWATCH_DEVICE: cpu
+      ANALYZER_CALLABLE: ${ANALYZER_CALLABLE-backend.cashwatch_adapter:analyze_video}
+      ANALYSIS_TIMEOUT_SECONDS: ${ANALYSIS_TIMEOUT_SECONDS:-270}
+      ANALYSIS_WORKERS: ${ANALYSIS_WORKERS:-1}
+      ANALYSIS_QUEUE_CAPACITY: ${ANALYSIS_QUEUE_CAPACITY:-4}
+      RESULT_RETENTION_SECONDS: ${RESULT_RETENTION_SECONDS:-86400}
+    volumes:
+      - app_data:/app/data
+    networks:
+      - backend
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=256m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 30s
+    healthcheck:
+      test: ["CMD", "python", "-c", "import json,urllib.request; assert json.load(urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3))['status']=='ok'"]
+      interval: 15s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  proxy:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?Set SITE_ADDRESS in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - public
+      - backend
+    depends_on:
+      app:
+        condition: service_healthy
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+networks:
+  public:
+  backend:
+    internal: true
+
+volumes:
+  app_data:
+  caddy_data:
+  caddy_config:

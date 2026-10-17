@@ -1,0 +1,6 @@
+# Use with compose.yaml. Requires Docker Compose 2.24.4 or newer.
+# SITE_ADDRESS=http://localhost docker compose -f compose.yaml -f compose.local.yaml up -d --build
+services:
+  proxy:
+    ports: !override
+      - "127.0.0.1:8080:80"

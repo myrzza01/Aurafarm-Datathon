@@ -1,0 +1,21 @@
+{$SITE_ADDRESS} {
+    # 100 MiB video plus multipart overhead. The app enforces the file limit.
+    request_body {
+        max_size 106MB
+    }
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy same-origin
+        X-Frame-Options SAMEORIGIN
+        -Server
+    }
+    reverse_proxy app:8000 {
+        # Replace untrusted client headers before passing to Uvicorn.
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+        transport http {
+            dial_timeout 5s
+            response_header_timeout 35s
+        }
+    }
+}

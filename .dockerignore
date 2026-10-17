@@ -1,0 +1,18 @@
+# Allow only runtime inputs into the build context, never local videos or secrets.
+**
+!Dockerfile
+!requirements.txt
+!requirements-ml.txt
+!backend/
+!backend/**
+!frontend/
+!frontend/**
+!ml/
+!ml/cashwatch/
+!ml/cashwatch/**
+!ml/weights/
+!ml/weights/**
+!ml/SOURCE.json
+!ml/THIRD_PARTY_NOTICES.md
+**/__pycache__/
+**/*.pyc
