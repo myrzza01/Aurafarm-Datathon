@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f4ef">
+  <meta name="description" content="Проверка видеозаписей кассовых операций с таймкодами и кадрами-доказательствами.">
+  <title>Forte Vision — проверка видео</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/app.css">
+  <script src="/assets/app.js" defer></script>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" class="icon-definitions" aria-hidden="true">
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-4 4 4-4 4 4M4 15v5h16v-5"/></symbol>
+    <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 9 5 3-5 3Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-frame" viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m6 0h6v-6"/><circle cx="12" cy="12" r="3"/></symbol>
+  </svg>
+  <div class="shell">
+    <header class="header">
+      <a class="brand" href="/" aria-label="Forte Vision — главная"><span class="brand-mark" aria-hidden="true">f<span>v</span></span><span>forte<span class="brand-light">vision</span><span class="brand-dot">.</span></span></a>
+      <nav class="nav" aria-label="Навигация">
+        <a href="#workspace" class="nav-link active">Проверка видео</a>
+        <button id="how-button" type="button" class="nav-link" aria-expanded="false" aria-controls="how-panel">Как это работает <span aria-hidden="true">↗</span></button>
+      </nav>
+      <span class="local-badge"><span class="status-dot"></span> Локальная обработка</span>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-content">
+          <div class="eyebrow"><span class="small-line"></span> ВНИМАНИЕ К ДЕТАЛЯМ</div>
+          <h1 id="hero-title">Каждый кадр<br>под <span class="highlight">контролем<svg viewBox="0 0 380 18" aria-hidden="true"><path d="M3 13Q190-2 377 9"/></svg></span>.</h1>
+          <p class="hero-description">Проверяйте кассовые операции по видео.<br>Возможные нарушения, точные таймкоды<br class="desktop-break"> и кадры, на которые стоит обратить внимание.</p>
+          <a class="hero-cta" href="#workspace">Начать проверку <svg class="icon"><use href="#i-arrow"/></svg></a>
+          <div class="hero-note"><svg class="icon"><use href="#i-shield"/></svg><span>Видео обрабатывается внутри сервиса</span></div>
+        </div>
+        <div class="bee-stage">
+          <div class="stage-grid" aria-hidden="true"></div>
+          <div class="stage-orbit orbit-one" aria-hidden="true"></div>
+          <div class="stage-orbit orbit-two" aria-hidden="true"></div>
+          <span class="stage-coordinate" aria-hidden="true">FV — 01 / OBSERVER</span>
+          <span class="stage-cross cross-one" aria-hidden="true">+</span><span class="stage-cross cross-two" aria-hidden="true">+</span>
+          <iframe class="bee-model" src="/assets/bee/index.html" title="Анимированная 3D-пчёлка над цветком" tabindex="-1"></iframe>
+          <div class="bee-label"><span class="status-dot"></span> Маленький помощник. Большое внимание.</div>
+          <span class="stage-caption" aria-hidden="true">СМОТРИМ ВНИМАТЕЛЬНО</span>
+        </div>
+      </section>
+
+      <section id="how-panel" class="how-panel" aria-labelledby="how-title" hidden>
+        <h2 id="how-title">От видео — к проверяемому результату</h2>
+        <ol><li><strong>Загрузите запись.</strong> Один файл .mov до 100 МиБ.</li><li><strong>Дождитесь обработки.</strong> Локальная модель проверяет визуально наблюдаемые действия.</li><li><strong>Изучите события.</strong> Сопоставьте таймкод, кадры и нормативный источник. Итоговую оценку даёт проверяющий.</li></ol>
+        <p>В текущей сборке модель ещё не подключена. Загрузка и API работают; результат анализа появится после интеграции модели.</p>
+      </section>
+
+      <section class="workspace" id="workspace" aria-labelledby="workspace-title">
+        <div class="section-heading"><div><span class="section-index">01 / НОВАЯ ПРОВЕРКА</span><h2 id="workspace-title">Начнём с видеозаписи</h2></div><span class="format-label">.MOV <span>·</span> ДО 100 МиБ</span></div>
+        <div class="workspace-grid">
+          <div class="upload-card">
+            <label id="dropzone" class="dropzone" for="video-file">
+              <input type="file" id="video-file" accept=".mov,video/quicktime">
+              <span class="upload-symbol"><svg class="icon"><use href="#i-upload"/></svg></span>
+              <strong>Перетащите видео сюда</strong>
+              <span class="dropzone-subtitle">или <span class="file-link">выберите файл</span> на устройстве</span>
+              <span class="dropzone-meta">Одна видеозапись в формате .mov</span>
+            </label>
+            <div id="selected-file" class="selected-file" hidden>
+              <span class="file-icon"><svg class="icon"><use href="#i-video"/></svg></span>
+              <span class="file-details"><strong id="file-name"></strong><span id="file-size"></span></span>
+              <button id="remove-file" type="button" class="icon-button" aria-label="Убрать выбранное видео"><svg class="icon"><use href="#i-close"/></svg></button>
+            </div>
+            <p id="file-error" class="file-error" role="alert" hidden></p>
+            <div class="upload-bottom"><span><svg class="icon"><use href="#i-shield"/></svg> Без передачи во внешние AI-сервисы</span><button id="analyze-button" class="primary-button" type="button" disabled>Проверить видео <svg class="icon"><use href="#i-arrow"/></svg></button></div>
+          </div>
+          <aside class="result-guide" aria-labelledby="guide-title">
+            <span class="guide-kicker">РЕЗУЛЬТАТ, КОТОРЫЙ МОЖНО ПРОВЕРИТЬ</span><h3 id="guide-title">Ничего лишнего.<br>Только то, что видно.</h3>
+            <div class="guide-item"><svg class="icon"><use href="#i-clock"/></svg><div><strong>Точный момент</strong><span>Таймкод каждого найденного события</span></div></div>
+            <div class="guide-item"><svg class="icon"><use href="#i-frame"/></svg><div><strong>Кадры-доказательства</strong><span>Визуальное подтверждение для проверки</span></div></div>
+            <div class="guide-item"><svg class="icon"><use href="#i-shield"/></svg><div><strong>Понятное обоснование</strong><span>Описание события и источник правила</span></div></div>
+          </aside>
+        </div>
+        <div class="integration-note"><span class="status-dot"></span><p><strong>Режим разработки.</strong> Локальная модель ещё не подключена. Можно проверить загрузку видео и работу API.</p></div>
+      </section>
+
+      <section id="analysis-panel" class="analysis-panel" aria-labelledby="analysis-title" aria-live="polite" hidden>
+        <div class="analysis-heading"><span id="analysis-icon" class="analysis-icon"><svg class="icon"><use href="#i-clock"/></svg></span><div><span class="section-index" id="analysis-kicker">ПРОВЕРКА ВИДЕО</span><h2 id="analysis-title">Загружаем видео</h2></div><span id="elapsed-time" class="elapsed-time">00:00</span></div>
+        <p id="analysis-message"></p>
+        <progress id="upload-progress" max="100" value="0" aria-label="Загрузка видео"></progress>
+        <p id="job-reference" class="job-reference" hidden></p>
+        <div id="results" class="results"></div>
+        <button id="retry-button" class="secondary-button" type="button" hidden>Повторить проверку <svg class="icon"><use href="#i-arrow"/></svg></button>
+      </section>
+    </main>
+    <footer class="footer"><span>fortevision <span class="footer-separator">/</span> Datathon 2026</span><span class="footer-note">Помощник проверяющего. Решение остаётся за человеком.</span><a href="/docs" target="_blank" rel="noopener">API для жюри <span aria-hidden="true">↗</span></a></footer>
+    <div class="model-credit">3D-пчёлка: <a href="https://codepen.io/fariati/pen/oNpZRbd" target="_blank" rel="noopener">Ibrahim Fariat</a></div>
+  </div>
+</body>
+</html>
