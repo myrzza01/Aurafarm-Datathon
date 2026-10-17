@@ -51,6 +51,15 @@ def parse_timestamps(value):
         return [float(value)]  # Numeric values are seconds, Excel time cells are dt.time.
     result = []
     for part in re.split(r"[;\n]", str(value).strip()):
+        natural = re.fullmatch(
+            r"\s*(?:(\d+(?:[.,]\d+)?)\s*(?:часа?|часов|ч|hours?|h)\s*)?"
+            r"(?:(\d+(?:[.,]\d+)?)\s*(?:минута|минуты|минут|мин|minutes?|m)\s*)?"
+            r"(?:(\d+(?:[.,]\d+)?)\s*(?:секунда|секунды|секунд|сек|с|seconds?|s)\.?\s*)?",
+            part, flags=re.I)
+        if natural and any(natural.groups()):
+            result.append(sum(float(number.replace(",", ".")) * scale
+                              for number, scale in zip(natural.groups(), (3600, 60, 1)) if number is not None))
+            continue
         part = re.sub(r"\s*(секунда|секунды|секунд|сек|seconds?|s)\.?\s*$", "", part.strip(), flags=re.I)
         if re.fullmatch(r"\d+(?:[.,]\d+)?", part):
             result.append(float(part.replace(",", ".")))
@@ -95,6 +104,18 @@ def read_annotations(path):
         return list(records.values())
     finally:
         workbook.close()
+
+
+def read_reviewed_annotations(path, **kwargs):
+    """Read the reviewed multi-sheet format; keep legacy imports unchanged."""
+    from .reviewed_data import read_reviewed_annotations as reader
+    return reader(path, **kwargs)
+
+
+def prepare_reviewed(workbook_path, video_dir, output, **kwargs):
+    """Prepare reviewed targets with per-event actions and exact-byte deduplication."""
+    from .reviewed_data import prepare_reviewed as prepare_data
+    return prepare_data(workbook_path, video_dir, output, **kwargs)
 
 
 def grouped_split(records, seed=42, val_fraction=0.25):

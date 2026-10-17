@@ -1,0 +1,716 @@
+{
+  "format_version": 1,
+  "checkpoint_sha256": "c98420fe67221d0b7193047f6e6c8e24a582d90de15321e0ac7bc9c9f3d2c18e",
+  "checkpoint_role": "earlier_diagnostic_partition_model",
+  "selected_epoch": 1,
+  "training_steps": 600,
+  "training_mode": "train_dev_selection_then_reserved_diagnostic_evaluation",
+  "metrics_scope": "partitioned_diagnostic_results_with_unverified_source_independence",
+  "independent_quality_established": false,
+  "provenance": {
+    "annotation_workbook": "dataset_review_merged_ml.xlsx",
+    "annotation_workbook_sha256": "f5793b7117e088306016fbbacf8d9f31a5fab3bb1c31a8566880f4d0707958f2",
+    "training_manifest_sha256": "e6fc0b69b73ad874366763f633990165d97d79fea43ed119618afef0c16c8438",
+    "experiment": "reviewed-v1",
+    "unique_video_sha256_groups": 40,
+    "binary_positive_videos": 21,
+    "binary_negative_videos": 19,
+    "human_action_events": 22,
+    "fine_action_classes": 16,
+    "fine_classes_with_one_group": 14,
+    "binary_label_sources": {
+      "source_original_weak": 36,
+      "human_confirmed": 4
+    },
+    "human_action_confirmation": "Explicit user confirmation of final H/J action annotations; historical review statuses retained separately.",
+    "source_session_review_complete": false,
+    "historical_training_overlap": "unknown",
+    "training_manifest_snapshot_sha256": "c60b0a2d1dfb6eefec746e99f353b719988c2c6a22b2d6fd6244690742759528",
+    "training_manifest_snapshot_normalized_lf_sha256": "e6fc0b69b73ad874366763f633990165d97d79fea43ed119618afef0c16c8438",
+    "training_manifest_snapshot_matches_declared_input_after_lf_normalization": true
+  },
+  "frozen_postprocess": {
+    "threshold": 0.5,
+    "merge_gap_sec": 0.6,
+    "min_hits": 1,
+    "confirmation": "single",
+    "confirmation_max_step_sec": 0.75
+  },
+  "partitions": {
+    "train": {
+      "videos": 28,
+      "video_detection": {
+        "tp": 15,
+        "fp": 13,
+        "fn": 0,
+        "tn": 0,
+        "precision": 0.5357142857142857,
+        "recall": 1.0,
+        "f1": 0.6976744186046512,
+        "balanced_accuracy": 0.5
+      },
+      "event_detection": {
+        "matched": 11,
+        "missed": 5,
+        "extra": 17,
+        "precision": 0.39285714285714285,
+        "recall": 0.6875,
+        "f1": 0.5,
+        "mae_sec": 1.5909090909090908,
+        "tolerance_sec": 5.0
+      },
+      "classification_at_annotated_centers": {
+        "events": 16,
+        "accuracy": 0.3125,
+        "macro_f1_supported": 0.196875,
+        "per_class": {
+          "cash_not_fully_delivered": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "customer_identity_not_presented": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "accepted_cash_left_exposed": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "equipment_left_on": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "cash_counting_omitted": {
+            "support": 1,
+            "correct": 1,
+            "f1": 0.4
+          },
+          "collector_documents_not_presented": {
+            "support": 1,
+            "correct": 1,
+            "f1": 0.25
+          },
+          "simultaneous_customer_service": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "safe_left_open": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "safe_key_left_in_lock": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "unsecured_storage_on_departure": {
+            "support": 1,
+            "correct": 1,
+            "f1": 0.5
+          },
+          "workstation_information_left_open": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "cash_office_door_left_open": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "customer_departed_before_completion": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "personal_items_on_cash_desk": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "rejected_banknote_recombined_without_check": {
+            "support": 1,
+            "correct": 1,
+            "f1": 1.0
+          },
+          "customer_cash_combined": {
+            "support": 1,
+            "correct": 1,
+            "f1": 1.0
+          }
+        },
+        "scope": "Classification at annotated event centers; excludes detector misses and false alerts."
+      },
+      "typed_events_end_to_end": {
+        "ground_truth_events": 16,
+        "typed_ground_truth_events": 16,
+        "predicted_events": 28,
+        "typed": {
+          "tp": 2,
+          "fp": 26,
+          "fn": 14,
+          "precision": 0.07142857142857142,
+          "recall": 0.125,
+          "f1": 0.09090909090909091,
+          "type_correct_matched": 2,
+          "wrong_type_matched": 9,
+          "missed_typed_truth": 5,
+          "unmatched_alerts": 17,
+          "classification_accuracy_on_temporally_matched_typed_events": 0.18181818181818182,
+          "macro_f1_supported": 0.07083333333333333
+        },
+        "per_class": {
+          "accepted_cash_left_exposed": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "cash_counting_omitted": {
+            "tp": 0,
+            "fp": 7,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "cash_not_fully_delivered": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "cash_office_door_left_open": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "collector_documents_not_presented": {
+            "tp": 1,
+            "fp": 13,
+            "fn": 0,
+            "precision": 0.07142857142857142,
+            "recall": 1.0,
+            "f1": 0.13333333333333333,
+            "support": 1
+          },
+          "customer_cash_combined": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "customer_departed_before_completion": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "customer_identity_not_presented": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "equipment_left_on": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "personal_items_on_cash_desk": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "rejected_banknote_recombined_without_check": {
+            "tp": 1,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1
+          },
+          "safe_key_left_in_lock": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "safe_left_open": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "simultaneous_customer_service": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "unsecured_storage_on_departure": {
+            "tp": 0,
+            "fp": 6,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "workstation_information_left_open": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          }
+        },
+        "matching": "One-to-one monotone temporal matching: maximum cardinality, minimum total absolute timing error, then type agreement between equally good monotone solutions.",
+        "scope": "End-to-end detected typed events; includes detector misses, wrong types, and unmatched alerts. Human-unverified truth types are explicitly excluded from typed scoring."
+      }
+    },
+    "dev": {
+      "videos": 6,
+      "video_detection": {
+        "tp": 3,
+        "fp": 3,
+        "fn": 0,
+        "tn": 0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6666666666666666,
+        "balanced_accuracy": 0.5
+      },
+      "event_detection": {
+        "matched": 1,
+        "missed": 2,
+        "extra": 5,
+        "precision": 0.16666666666666666,
+        "recall": 0.3333333333333333,
+        "f1": 0.2222222222222222,
+        "mae_sec": 1.5,
+        "tolerance_sec": 5.0
+      },
+      "classification_at_annotated_centers": {
+        "events": 3,
+        "accuracy": 0.0,
+        "macro_f1_supported": 0.0,
+        "per_class": {
+          "cash_not_fully_delivered": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "customer_identity_not_presented": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "accepted_cash_left_exposed": {
+            "support": 2,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "equipment_left_on": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "cash_counting_omitted": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "collector_documents_not_presented": {
+            "support": 0,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "simultaneous_customer_service": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "safe_left_open": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "safe_key_left_in_lock": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "unsecured_storage_on_departure": {
+            "support": 0,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "workstation_information_left_open": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "cash_office_door_left_open": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "customer_departed_before_completion": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "personal_items_on_cash_desk": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "rejected_banknote_recombined_without_check": {
+            "support": 0,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "customer_cash_combined": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          }
+        },
+        "scope": "Classification at annotated event centers; excludes detector misses and false alerts."
+      },
+      "typed_events_end_to_end": {
+        "ground_truth_events": 3,
+        "typed_ground_truth_events": 3,
+        "predicted_events": 6,
+        "typed": {
+          "tp": 0,
+          "fp": 6,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "type_correct_matched": 0,
+          "wrong_type_matched": 1,
+          "missed_typed_truth": 2,
+          "unmatched_alerts": 5,
+          "classification_accuracy_on_temporally_matched_typed_events": 0.0,
+          "macro_f1_supported": 0.0
+        },
+        "per_class": {
+          "accepted_cash_left_exposed": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2
+          },
+          "cash_counting_omitted": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "cash_office_door_left_open": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "collector_documents_not_presented": {
+            "tp": 0,
+            "fp": 2,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "rejected_banknote_recombined_without_check": {
+            "tp": 0,
+            "fp": 2,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "unsecured_storage_on_departure": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "matching": "One-to-one monotone temporal matching: maximum cardinality, minimum total absolute timing error, then type agreement between equally good monotone solutions.",
+        "scope": "End-to-end detected typed events; includes detector misses, wrong types, and unmatched alerts. Human-unverified truth types are explicitly excluded from typed scoring."
+      }
+    },
+    "test": {
+      "videos": 6,
+      "video_detection": {
+        "tp": 3,
+        "fp": 3,
+        "fn": 0,
+        "tn": 0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6666666666666666,
+        "balanced_accuracy": 0.5
+      },
+      "event_detection": {
+        "matched": 1,
+        "missed": 2,
+        "extra": 5,
+        "precision": 0.16666666666666666,
+        "recall": 0.3333333333333333,
+        "f1": 0.2222222222222222,
+        "mae_sec": 1.5,
+        "tolerance_sec": 5.0
+      },
+      "classification_at_annotated_centers": {
+        "events": 3,
+        "accuracy": 0.0,
+        "macro_f1_supported": 0.0,
+        "per_class": {
+          "cash_not_fully_delivered": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "customer_identity_not_presented": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "accepted_cash_left_exposed": {
+            "support": 2,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "equipment_left_on": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "cash_counting_omitted": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "collector_documents_not_presented": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "simultaneous_customer_service": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "safe_left_open": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "safe_key_left_in_lock": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "unsecured_storage_on_departure": {
+            "support": 0,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "workstation_information_left_open": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "cash_office_door_left_open": {
+            "support": 1,
+            "correct": 0,
+            "f1": 0.0
+          },
+          "customer_departed_before_completion": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "personal_items_on_cash_desk": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "rejected_banknote_recombined_without_check": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          },
+          "customer_cash_combined": {
+            "support": 0,
+            "correct": 0,
+            "f1": null
+          }
+        },
+        "scope": "Classification at annotated event centers; excludes detector misses and false alerts."
+      },
+      "typed_events_end_to_end": {
+        "ground_truth_events": 3,
+        "typed_ground_truth_events": 3,
+        "predicted_events": 6,
+        "typed": {
+          "tp": 0,
+          "fp": 6,
+          "fn": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "type_correct_matched": 0,
+          "wrong_type_matched": 1,
+          "missed_typed_truth": 2,
+          "unmatched_alerts": 5,
+          "classification_accuracy_on_temporally_matched_typed_events": 0.0,
+          "macro_f1_supported": 0.0
+        },
+        "per_class": {
+          "accepted_cash_left_exposed": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 2,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2
+          },
+          "cash_counting_omitted": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "cash_office_door_left_open": {
+            "tp": 0,
+            "fp": 0,
+            "fn": 1,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 1
+          },
+          "collector_documents_not_presented": {
+            "tp": 0,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          },
+          "unsecured_storage_on_departure": {
+            "tp": 0,
+            "fp": 4,
+            "fn": 0,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 0
+          }
+        },
+        "matching": "One-to-one monotone temporal matching: maximum cardinality, minimum total absolute timing error, then type agreement between equally good monotone solutions.",
+        "scope": "End-to-end detected typed events; includes detector misses, wrong types, and unmatched alerts. Human-unverified truth types are explicitly excluded from typed scoring."
+      }
+    }
+  },
+  "evaluation": {
+    "evaluated_utc": "2026-10-17T17:06:08.125402+00:00",
+    "parameters_changed": false,
+    "training_performed": false,
+    "checkpoint_sha256": "c98420fe67221d0b7193047f6e6c8e24a582d90de15321e0ac7bc9c9f3d2c18e",
+    "source_manifest_sha256": "c60b0a2d1dfb6eefec746e99f353b719988c2c6a22b2d6fd6244690742759528",
+    "source_report_sha256_before_append": "a4703b43bc7a9993dbe572df29575a66ea90694cd76c42f41492416f1d334e65",
+    "source_manifest": "reviewed-v1/manifest.json",
+    "runtime": {
+      "python": "3.12.13",
+      "torch": "2.7.1+cu128",
+      "device": "cuda",
+      "gpu": "NVIDIA GeForce RTX 5070"
+    },
+    "cache_hashes_available": 0,
+    "source_videos_sha256_verified": true,
+    "network_attempts": 0,
+    "elapsed_evaluation_sec": 4.079,
+    "checkpoint_declared_training_manifest_sha256": "e6fc0b69b73ad874366763f633990165d97d79fea43ed119618afef0c16c8438",
+    "source_manifest_normalized_lf_sha256": "e6fc0b69b73ad874366763f633990165d97d79fea43ed119618afef0c16c8438",
+    "snapshot_serialization": "Windows snapshot changes LF to CRLF only; normalized bytes match the checkpoint-declared training input"
+  },
+  "limitations": [
+    "Only 40 unique videos; most action classes have one example.",
+    "Source sessions and related takes are unreviewed. Held-out results are diagnostic, not independent accuracy.",
+    "Some binary labels/timestamps retain original provenance; user confirmed H/J action labels.",
+    "Softmax confidence is uncalibrated. Class-specific explanation is a prediction requiring visual review.",
+    "Generalization to a new camera angle has not been tested."
+  ],
+  "weights_verified_unchanged_by_evaluation": true
+}

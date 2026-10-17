@@ -1,10 +1,8 @@
-"""Durable jobs and a bounded, process-isolated local analysis queue (POSIX)."""
+"""Durable jobs and a bounded, process-isolated local analysis queue."""
 from contextlib import closing
-import fcntl
 import json
 import multiprocessing
 import os
-import signal
 from pathlib import Path
 import sqlite3
 import threading
@@ -13,9 +11,14 @@ from uuid import uuid4
 
 from backend.analyzer import AnalyzerNotConfigured
 from backend.schemas import AnalysisResult, JobResponse, MAX_RESULT_BYTES
+from backend.platform import FileLock, ParentMonitor, ProcessTree, kill_current_tree, prepare_child
 
 
 class QueueFull(RuntimeError):
+    pass
+
+
+class JobTimeout(RuntimeError):
     pass
 
 
@@ -34,22 +37,30 @@ class JobStore:
             """)
         path.chmod(0o600)
 
-    def connect(self):
-        db = sqlite3.connect(self.path, timeout=10)
+    def connect(self, timeout: float = 10):
+        db = sqlite3.connect(self.path, timeout=timeout)
         db.row_factory = sqlite3.Row
         return db
 
     def submit(self, path: Path, owner: str | None, timeout: float, capacity: int) -> str:
         now = time.time()
+        deadline = now + timeout
         job_id = uuid4().hex
-        with closing(self.connect()) as db, db:
-            db.execute("BEGIN IMMEDIATE")
-            count = db.execute("SELECT count(*) FROM jobs WHERE state IN ('queued','running')").fetchone()[0]
-            if count >= capacity:
-                raise QueueFull()
-            db.execute("INSERT INTO jobs VALUES (?,?,?,?,?,?,?,?,?)", (
-                job_id, owner, "queued", now, now, now + timeout, str(path.resolve()), None, None,
-            ))
+        try:
+            with closing(self.connect(timeout=min(10, max(.001, timeout)))) as db, db:
+                db.execute("BEGIN IMMEDIATE")
+                if time.time() >= deadline:
+                    raise JobTimeout()
+                count = db.execute("SELECT count(*) FROM jobs WHERE state IN ('queued','running')").fetchone()[0]
+                if count >= capacity:
+                    raise QueueFull()
+                db.execute("INSERT INTO jobs VALUES (?,?,?,?,?,?,?,?,?)", (
+                    job_id, owner, "queued", now, now, deadline, str(path.resolve()), None, None,
+                ))
+        except sqlite3.OperationalError as exc:
+            if time.time() >= deadline:
+                raise JobTimeout() from exc
+            raise
         return job_id
 
     def get(self, job_id: str):
@@ -108,17 +119,17 @@ class JobStore:
             )""")
 
 
-def _analyze_child(analyzer, video_path: str, output_path: str, deadline: float, parent_pid: int):
-    os.setsid()
+def _analyze_child(analyzer, video_path: str, output_path: str, deadline: float, parent_pid: int, gate, job_name):
+    prepare_child()
     def watchdog():
         # Also stop an orphaned model after an ungraceful API-process exit.
-        while time.time() < deadline and os.getppid() == parent_pid:
-            time.sleep(.1)
-        try:
-            os.killpg(os.getpid(), signal.SIGKILL)
-        except (ProcessLookupError, PermissionError):
-            os._exit(1)
+        with ParentMonitor(parent_pid) as parent:
+            while time.time() < deadline and parent.alive():
+                time.sleep(.1)
+        kill_current_tree(job_name)
     threading.Thread(target=watchdog, daemon=True).start()
+    # On Windows the parent must assign the process to its Job Object first.
+    gate.wait()
     try:
         result = AnalysisResult.model_validate(analyzer(Path(video_path)))
         payload = result.model_dump_json()
@@ -167,18 +178,13 @@ class JobRunner:
 
     def _coordinate(self):
         # A single leader coordinates all API workers sharing this local data directory.
-        with (self.store.path.parent / "jobs.lock").open("a") as lock:
-            while not self.stop.is_set():
-                try:
-                    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                except BlockingIOError:
-                    self.stop.wait(.1)
-                    continue
-                try:
+        while not self.stop.is_set():
+            try:
+                with FileLock(self.store.path.parent / "jobs.lock", blocking=False):
                     self._run()
-                finally:
-                    fcntl.flock(lock, fcntl.LOCK_UN)
                 return
+            except BlockingIOError:
+                self.stop.wait(.1)
 
     def _run(self):
         self.store.recover()
@@ -199,18 +205,18 @@ class JobRunner:
                         except FileNotFoundError:
                             pass
                     next_cleanup = time.monotonic() + 60
-                for job_id, (row, process, output) in list(active.items()):
+                for job_id, (row, process, output, tree) in list(active.items()):
                     expired = time.time() >= row["deadline"]
                     if not expired and process.is_alive():
                         continue
-                    self._stop_process(process)
+                    self._stop_process(process, tree)
                     error = "Время ожидания и обработки превысило допустимый лимит" if expired else None
                     payload = None
                     if not error:
                         try:
                             if output.stat().st_size > MAX_RESULT_BYTES * 2:
                                 raise ValueError()
-                            data = json.loads(output.read_text())
+                            data = json.loads(output.read_text(encoding="utf-8"))
                             payload, error = data.get("result"), data.get("error")
                             if not payload and not error:
                                 raise ValueError()
@@ -225,30 +231,39 @@ class JobRunner:
                     if not row:
                         break
                     output = self.work / f'{row["job_id"]}.json'
-                    process = context.Process(target=_analyze_child, args=(
-                        self.analyzer, row["upload_path"], str(output), row["deadline"], os.getpid(),
-                    ), daemon=True)
+                    tree = None
+                    process = None
                     try:
+                        tree = ProcessTree()
+                        gate = context.Event()
+                        process = context.Process(target=_analyze_child, args=(
+                            self.analyzer, row["upload_path"], str(output), row["deadline"], os.getpid(), gate, tree.name,
+                        ), daemon=True)
                         process.start()
+                        tree.attach(process)
+                        gate.set()
                     except Exception:
-                        process.close()
+                        if process is not None:
+                            if process.pid is not None:
+                                self._stop_process(process, tree)
+                            process.close()
+                        if tree is not None:
+                            tree.close()
                         self.store.finish(row["job_id"], error="Не удалось запустить процесс анализа")
                         continue
-                    active[row["job_id"]] = (row, process, output)
+                    active[row["job_id"]] = (row, process, output, tree)
                 self.stop.wait(.05)
         finally:
-            for job_id, (_, process, output) in active.items():
-                self._stop_process(process)
+            for job_id, (_, process, output, tree) in active.items():
+                self._stop_process(process, tree)
                 process.close()
                 self.store.finish(job_id, error="Обработка прервана остановкой сервера. Загрузите видео заново.")
                 output.unlink(missing_ok=True)
 
     @staticmethod
-    def _stop_process(process):
+    def _stop_process(process, tree):
         # Kill any subprocesses created by a local model, even if its entrypoint exited.
         try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except (ProcessLookupError, PermissionError):
-            if process.is_alive():
-                process.kill()
-        process.join()
+            tree.terminate(process)
+        finally:
+            tree.close()

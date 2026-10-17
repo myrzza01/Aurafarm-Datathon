@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-import fcntl
 import os
 import secrets
 import sqlite3
@@ -18,8 +17,10 @@ from fastapi.staticfiles import StaticFiles
 
 from backend.analyzer import analyze_video, analyzer_configured, analyzer_spec, DEFAULT_ANALYZER
 from backend.auth import AuthStore, LoginData, RegisterData, SESSION_SECONDS
-from backend.jobs import JobStore, JobRunner, QueueFull
+from backend.jobs import JobStore, JobRunner, QueueFull, JobTimeout
 from backend.media import InvalidVideo, validate_video
+from backend.deadline import AnalysisDeadlineMiddleware
+from backend.platform import FileLock
 from backend.schemas import AnalysisResult, JobCreated, JobResponse
 
 key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
@@ -61,6 +62,7 @@ def create_app(
             runner.close()
 
     app = FastAPI(title="ForteBank Video Review API", version="0.3.0", lifespan=lifespan, docs_url=None, redoc_url=None)
+    app.add_middleware(AnalysisDeadlineMiddleware, timeout=timeout)
     frontend = Path(__file__).resolve().parent.parent / "frontend"
     accounts = AuthStore(auth_db or storage.parent / "auth.sqlite3")
     attempts: dict[str, list[float]] = {}
@@ -173,8 +175,9 @@ def create_app(
 
     @app.get("/health")
     def health():
+        from backend.cashwatch_adapter import analyzer_kind
         return {"status": "ok", "analyzer_configured": model_configured(),
-                "analyzer_kind": "binary" if analyzer is analyze_video and analyzer_spec() == DEFAULT_ANALYZER else "custom"}
+                "analyzer_kind": analyzer_kind() if analyzer is analyze_video and analyzer_spec() == DEFAULT_ANALYZER else "custom"}
 
     @app.post(
         "/app/api/v1/analyze", response_model=JobCreated, status_code=202,
@@ -186,14 +189,23 @@ def create_app(
     )
     def analyze(file: UploadFile, request: Request):
         path = None
-        started = time.monotonic()
+        deadline = getattr(request.state, "analysis_deadline", time.monotonic() + timeout)
+
+        def remaining_time():
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise HTTPException(status_code=408, detail="Передача и обработка файла превысили допустимое время")
+            return remaining
+
         try:
+            remaining_time()
             if Path(file.filename or "").suffix.lower() != ".mov":
                 raise HTTPException(status_code=415, detail="Expected a .mov file")
             size = 0
             with tempfile.NamedTemporaryFile(dir=storage, suffix=".mov", delete=False) as out:
                 path = Path(out.name)
                 while chunk := file.file.read(1024 * 1024):
+                    remaining_time()
                     size += len(chunk)
                     if size > max_upload_bytes:
                         raise HTTPException(status_code=413, detail="File exceeds upload limit")
@@ -201,26 +213,23 @@ def create_app(
             if size == 0:
                 raise HTTPException(status_code=400, detail="Empty file")
             # One validation process per data directory, shared across API workers.
-            with (storage.parent / "video-validation.lock").open("a") as lock:
-                try:
-                    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                except BlockingIOError:
-                    raise HTTPException(status_code=429, detail="Проверяется другой файл. Повторите загрузку позже.", headers={"Retry-After": "2"})
-                try:
-                    validate_video(path)
-                except InvalidVideo as exc:
-                    raise HTTPException(status_code=415, detail=str(exc)) from exc
-                finally:
-                    fcntl.flock(lock, fcntl.LOCK_UN)
+            try:
+                with FileLock(storage.parent / "video-validation.lock", blocking=False):
+                    try:
+                        validate_video(path, timeout=min(20, remaining_time()))
+                    except InvalidVideo as exc:
+                        remaining_time()
+                        raise HTTPException(status_code=415, detail=str(exc)) from exc
+            except BlockingIOError:
+                raise HTTPException(status_code=429, detail="Проверяется другой файл. Повторите загрузку позже.", headers={"Retry-After": "2"})
             if not model_configured():
                 raise HTTPException(status_code=503, detail="Локальный анализатор пока не подключён. Обратитесь к команде сервиса.")
-            remaining = timeout - (time.monotonic() - started)
-            if remaining <= 0:
-                raise HTTPException(status_code=408, detail="Проверка файла превысила допустимое время")
             try:
-                job_id = jobs.submit(path, getattr(request.state, "user", {}).get("id"), remaining, capacity)
+                job_id = jobs.submit(path, getattr(request.state, "user", {}).get("id"), remaining_time(), capacity)
             except QueueFull:
                 raise HTTPException(status_code=429, detail="Очередь анализа заполнена. Попробуйте позже.", headers={"Retry-After": "5"})
+            except JobTimeout:
+                raise HTTPException(status_code=408, detail="Передача и обработка файла превысили допустимое время")
             return JobCreated(job_id=job_id)
         except Exception:
             if path is not None:

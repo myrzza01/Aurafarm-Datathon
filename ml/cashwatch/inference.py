@@ -14,11 +14,14 @@ from .video import clip_indices, decode_sampled, evidence_frames
 
 def default_checkpoint_path():
     root = Path(__file__).resolve().parents[1]
+    reviewed = root / "weights" / "reviewed_detector.pt"
+    if reviewed.is_file():
+        return reviewed
     packaged = root / "weights" / "detector.pt"
     return packaged if packaged.is_file() else root / "artifacts" / "cycle" / "selected.pt"
 
 
-def score_frames(model, images, times, device, frames=8, fps=2.0, deadline=None):
+def score_frames(model, images, times, device, frames=8, fps=2.0, deadline=None, return_actions=False):
     features = []
     model.eval()
     with torch.inference_mode():
@@ -28,12 +31,15 @@ def score_frames(model, images, times, device, frames=8, fps=2.0, deadline=None)
             batch = torch.from_numpy(images[start:start+32].copy()).permute(0, 3, 1, 2).to(device).float() / 255
             features.append(model.encode(batch))
         features = torch.cat(features)
-        scores = []
+        scores, actions = [], []
         for start in range(0, len(times), 64):
             indices = np.stack([clip_indices(times, center, frames, fps) for center in times[start:start+64]])
             windows = features[torch.as_tensor(indices, dtype=torch.long, device=device)]
             scores.extend(model.classify(windows).sigmoid().cpu().tolist())
-    return np.asarray(scores, dtype=np.float64)
+            if return_actions:
+                actions.extend(model.classify_actions(windows).softmax(-1).cpu().tolist())
+    scores = np.asarray(scores, dtype=np.float64)
+    return (scores, np.asarray(actions)) if return_actions else scores
 
 
 def event_peaks(times, scores, threshold=0.5, merge_gap=1.0):
@@ -55,7 +61,7 @@ class VideoAnalyzer:
         self.device = select_device(device)
         checkpoint = default_checkpoint_path() if checkpoint is None else checkpoint
         saved = torch.load(Path(checkpoint), map_location="cpu", weights_only=True)
-        if saved.get("format_version") not in {1, 2} or saved.get("training_steps", 0) < 1:
+        if saved.get("format_version") not in {1, 2, 3} or saved.get("training_steps", 0) < 1:
             raise ValueError("Expected a trained cashwatch checkpoint")
         self.config = saved["config"]
         self.postprocess = self.config.get("postprocess", {"threshold": self.config.get("threshold", 0.5),
@@ -65,7 +71,9 @@ class VideoAnalyzer:
         if not 0 < self.threshold < 1:
             raise ValueError("threshold must be between 0 and 1")
         # pretrained=False is intentional: inference must never download weights.
-        self.model = VideoDetector(pretrained=False, head_type=self.config.get("head_type", "temporal")).to(self.device)
+        self.type_ids = self.config.get("event_taxonomy", {}).get("type_ids", []) if saved["format_version"] == 3 else []
+        self.model = VideoDetector(pretrained=False, head_type=self.config.get("head_type", "temporal"),
+            action_classes=len(self.type_ids)).to(self.device)
         self.model.load_state_dict(saved["model"])
         self.model.eval()
 
@@ -74,8 +82,12 @@ class VideoAnalyzer:
         images, times, duration = decode_sampled(video_path, fps=self.config["fps"],
             size=self.config["image_size"], deadline=deadline)
         decoded = time.monotonic()
-        scores = score_frames(self.model, images, times, self.device,
-            self.config["clip_frames"], self.config["fps"], deadline)
+        scored = score_frames(self.model, images, times, self.device,
+            self.config["clip_frames"], self.config["fps"], deadline, return_actions=bool(self.type_ids))
+        if self.type_ids:
+            scores, self.last_action_scores = scored
+        else:
+            scores, self.last_action_scores = scored, None
         if self.device.type == "cuda":
             torch.cuda.synchronize()
         self.last_timings = {"decode_sec": decoded-started, "model_sec": time.monotonic()-decoded}
@@ -95,12 +107,20 @@ class VideoAnalyzer:
         for event in events:
             peak = frames[event["timecode_sec"]]
             event_targets = sorted(set([event["start_sec"], event["timecode_sec"], event["end_sec"]]))
-            violations.append({
+            violation = {
                 "type": "Признаки возможного нарушения (тип не классифицирован)",
                 "timecode_sec": peak["timestamp_sec"],
                 "description": "Обученная бинарная модель выделила этот видеофрагмент для проверки человеком. "
                     "Конкретное действие и нормативное основание этой моделью не определяются.",
-                "evidence_frames": [frames[target] for target in event_targets]})
+                "evidence_frames": [frames[target] for target in event_targets]}
+            if self.type_ids:
+                from .rules import action_explanation
+                position = int(np.argmin(np.abs(times - event["timecode_sec"])))
+                distribution = self.last_action_scores[position]
+                selected = int(distribution.argmax())
+                event["type_id"] = self.type_ids[selected]
+                violation.update(action_explanation(event["type_id"], distribution[selected], event["start_sec"], event["end_sec"]))
+            violations.append(violation)
         if time.monotonic() > deadline:
             raise TimeoutError("Inference time budget exceeded")
         result = {"verdict": "violation" if violations else "no_violation", "violations": violations}
@@ -112,7 +132,8 @@ class VideoAnalyzer:
             "events": len(violations), "sampled_frames": len(times),
             "intervals": events, "postprocess": self.postprocess,
             "full_http_request_sec": None,
-            "limitation": "Binary experimental detector. No event taxonomy or legal rule mapping."}
+            "limitation": "Experimental action predictions and conditional rule references require human review. New camera angles untested."
+                if self.type_ids else "Binary experimental detector. No event taxonomy or legal rule mapping."}
         return result, diagnostics
 
 

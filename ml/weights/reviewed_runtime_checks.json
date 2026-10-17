@@ -1,0 +1,143 @@
+{
+  "verified_date": "2026-10-17",
+  "checkpoint_sha256": "3d47fcb8b5d4eaa100a0530eaa0646ffe2cd4c66e669993eb4828b372afedd44",
+  "windows_real_video_http": {
+    "environment": "Native Windows Python 3.12 / CUDA auto",
+    "checks": [
+      {
+        "video_id": "x-1",
+        "elapsed_sec": 8.344,
+        "verdict": "violation",
+        "events": 2,
+        "validated_jpeg_frames": 6,
+        "mapped_events": 2,
+        "all_semantic_fields_valid": true
+      },
+      {
+        "video_id": "x-2",
+        "elapsed_sec": 5.875,
+        "verdict": "violation",
+        "events": 1,
+        "validated_jpeg_frames": 3,
+        "mapped_events": 1,
+        "all_semantic_fields_valid": true
+      },
+      {
+        "video_id": "x-4",
+        "elapsed_sec": 8.797,
+        "verdict": "violation",
+        "events": 2,
+        "validated_jpeg_frames": 6,
+        "mapped_events": 2,
+        "all_semantic_fields_valid": true
+      },
+      {
+        "video_id": "x-14",
+        "elapsed_sec": 10.5,
+        "verdict": "no_violation",
+        "events": 0,
+        "validated_jpeg_frames": 0,
+        "mapped_events": 0,
+        "all_semantic_fields_valid": true
+      }
+    ],
+    "health": {
+      "status": "ok",
+      "analyzer_configured": true,
+      "analyzer_kind": "semantic"
+    },
+    "unauthorized_get": 401,
+    "corrupt_video": 415
+  },
+  "offline_real_video_http": {
+    "isolation": "Linux user+network namespace; only loopback is up; no host firewall changes",
+    "external_tcp_probe": {
+      "errno": 101,
+      "reason": "[Errno 101] Network is unreachable"
+    },
+    "checks": [
+      {
+        "video": "X-1.mov",
+        "bytes": 5253179,
+        "duration_sec": 25.933333,
+        "width": 464,
+        "height": 848,
+        "fps": "11640/389",
+        "post_status": 202,
+        "upload_accept_sec": 0.784,
+        "status": "done",
+        "verdict": "violation",
+        "events": 2,
+        "full_http_sec": 5.442,
+        "jpeg_frames_validated": 6,
+        "rule_statuses": [
+          "provided"
+        ]
+      },
+      {
+        "video": "Х-14.mov",
+        "bytes": 28718927,
+        "duration_sec": 142.533021,
+        "width": 464,
+        "height": 848,
+        "fps": "64095/2138",
+        "post_status": 202,
+        "upload_accept_sec": 3.534,
+        "status": "done",
+        "verdict": "no_violation",
+        "events": 0,
+        "full_http_sec": 7.781,
+        "jpeg_frames_validated": 0,
+        "rule_statuses": []
+      }
+    ]
+  },
+  "public_https_synthetic_only": {
+    "synthetic_video_only": true,
+    "health_http": 200,
+    "unauthenticated_ui_http": 401,
+    "jury_without_key_http": 401,
+    "registration_http": 201,
+    "login_http": 200,
+    "secure_cookie": true,
+    "synthetic_video_bytes": 31610,
+    "jury_api": {
+      "upload_http": 202,
+      "status": "done",
+      "verdict": "no_violation",
+      "events": 0,
+      "elapsed_seconds": 6.125
+    },
+    "browser_api": {
+      "upload_http": 202,
+      "status": "done",
+      "verdict": "no_violation",
+      "events": 0,
+      "elapsed_seconds": 5.953
+    }
+  },
+  "standalone_inference_bundle": {
+    "path": "data/handoff-reviewed",
+    "real_video_inference_passed": true,
+    "training_data_included": false
+  },
+  "browser_visual_check": {
+    "completed": false,
+    "reason": "CUA inventory has no browsers; iab unavailable. HTTP browser-session routes tested separately."
+  },
+  "new_camera_angle_check": {
+    "completed": false,
+    "reason": "No separately identified new-camera-angle evaluation videos supplied."
+  },
+  "limits": [
+    "Runtime checks establish operation, not prediction accuracy.",
+    "Public URL is temporary and depends on this computer and tunnel process."
+  ],
+  "automated_tests": {
+    "passed": 113,
+    "subtests_passed": 11,
+    "elapsed_sec": 45.7,
+    "platform": "Native Windows Python 3.12",
+    "command": "python -m pytest tests ml/tests -q"
+  }
+}

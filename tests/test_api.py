@@ -39,7 +39,7 @@ def test_upload_then_get_result(client, mov_bytes):
 @pytest.mark.parametrize("name,content,status", [
     ("a.mp4", b"test", 415), ("a.mov", b"", 400), ("a.mov", b"x" * (1024 * 1024 + 1), 413),
     ("a.mov", b"not a video", 415),
-])
+], ids=["wrong-extension", "empty", "too-large", "not-video"])
 def test_rejects_invalid_uploads(client, name, content, status):
     response = client.post("/api/v1/analyze", headers=KEY, files={"file": (name, content)})
     assert response.status_code == status

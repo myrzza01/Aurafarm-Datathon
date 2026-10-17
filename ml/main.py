@@ -12,6 +12,8 @@ def main():
     root = Path(__file__).resolve().parent
     packaged = root / "weights" / "detector.pt"
     default_checkpoint = packaged if packaged.is_file() else root / "artifacts" / "cycle" / "selected.pt"
+    if (root / "weights" / "reviewed_detector.pt").is_file():
+        default_checkpoint = root / "weights" / "reviewed_detector.pt"
     commands = parser.add_subparsers(dest="command", required=True)
     weights = commands.add_parser("init-weights", help="Download initial encoder once; all later commands use local weights")
     weights.add_argument("--output", type=Path, default=Path("artifacts/pretrained/encoder.pt"))
@@ -26,6 +28,13 @@ def main():
     prepare.add_argument("--accept-label-revisions", action="store_true",
                          help="Accept reviewed dev/test label revisions, archive prior manifest and invalidate test qualification")
     prepare.add_argument("--seed", type=int, default=42)
+    reviewed = commands.add_parser("prepare-reviewed", help="Import the merged human review workbook with explicit provenance")
+    reviewed.add_argument("--workbook", required=True, type=Path)
+    reviewed.add_argument("--videos", required=True, type=Path)
+    reviewed.add_argument("--output", required=True, type=Path)
+    reviewed.add_argument("--confirm-action-notes", action="store_true", help="H/J are final human action annotations")
+    reviewed.add_argument("--allow-weak-original", action="store_true", help="Retain original binary labels with weak provenance")
+    reviewed.add_argument("--seed", type=int, default=42)
     training = commands.add_parser("train", help="Train encoder and temporal classifier on video pixels")
     training.add_argument("--manifest", type=Path, default=Path("artifacts/data/manifest.json"))
     training.add_argument("--output", type=Path, default=Path("artifacts/cycle/temporal"))
@@ -62,6 +71,12 @@ def main():
             prepare_data(args.data_dir, args.output, args.labels, args.allow_missing, args.groups_csv, args.seed,
                          group_review_confirmed=args.confirm_group_review,
                          accept_label_revisions=args.accept_label_revisions)
+        elif args.command == "prepare-reviewed":
+            from cashwatch.data import prepare_reviewed
+            manifest = prepare_reviewed(args.workbook, args.videos, args.output, seed=args.seed,
+                allow_weak_original=args.allow_weak_original,
+                human_action_notes_confirmed=args.confirm_action_notes)
+            print(json.dumps({"prepared_unique_videos": len(manifest["records"]), "manifest": str(args.output / "manifest.json")}))
         elif args.command == "train":
             from cashwatch.train import train
             report = train(args.manifest, args.output, args.epochs, args.batch_size, args.device,

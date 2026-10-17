@@ -13,7 +13,7 @@ import pytest
 from backend.jobs import JobStore, JobRunner, QueueFull
 from backend.main import create_app
 from backend.schemas import AnalysisResult, EvidenceFrame, Violation
-from tests.helpers import clean_analyzer, counted_analyzer, slow_analyzer, wait_job
+from tests.helpers import clean_analyzer, counted_analyzer, slow_analyzer, wait_job, process_is_running
 
 KEY = {"X-API-Key": "test-key"}
 
@@ -57,8 +57,7 @@ def test_timeout_terminates_process_and_removes_video(tmp_path, mov_bytes):
         markers = list((tmp_path / 'uploads').glob('*.pid'))
         assert markers, "The blocking analyzer must actually have started"
         for marker in markers:
-            with pytest.raises(ProcessLookupError):
-                os.kill(int(marker.read_text()), 0)
+            assert not process_is_running(int(marker.read_text()))
 
 
 def test_capacity_is_atomic_and_queue_is_durable(tmp_path, mov_bytes):
