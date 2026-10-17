@@ -9,13 +9,14 @@ KEY = {"X-API-Key": "test-key"}
 
 @pytest.fixture
 def client(tmp_path):
+    upload_dir = tmp_path / "uploads"
     app = create_app(
         analyzer=lambda path: AnalysisResult(verdict="no_violation", violations=[]),
-        api_key="test-key", upload_dir=tmp_path, max_upload_bytes=32,
+        api_key="test-key", upload_dir=upload_dir, auth_db=tmp_path / "accounts.sqlite3", max_upload_bytes=32,
     )
     with TestClient(app) as test_client:
         yield test_client
-    assert not list(tmp_path.iterdir())
+    assert not list(upload_dir.iterdir())
 
 
 def test_requires_key_on_both_routes(client):
@@ -47,12 +48,12 @@ def test_unknown_job(client):
 
 
 def test_unconfigured_model_fails_explicitly(tmp_path):
-    with TestClient(create_app(api_key="test-key", upload_dir=tmp_path)) as client:
+    with TestClient(create_app(api_key="test-key", upload_dir=tmp_path / "uploads", auth_db=tmp_path / "accounts.sqlite3")) as client:
         job = client.post("/api/v1/analyze", headers=KEY, files={"file": ("a.mov", b"test")}).json()
         result = client.get(f'/api/v1/jobs/{job["job_id"]}', headers=KEY).json()
         assert result["status"] == "failed"
         assert "verdict" not in result
-    assert not list(tmp_path.iterdir())
+    assert not list((tmp_path / "uploads").iterdir())
 
 
 def test_inconsistent_model_result_is_rejected():
@@ -64,21 +65,25 @@ def test_model_error_does_not_become_clean_verdict(tmp_path):
     def broken_analyzer(path):
         raise RuntimeError("internal details")
 
-    with TestClient(create_app(broken_analyzer, api_key="test-key", upload_dir=tmp_path)) as client:
+    with TestClient(create_app(broken_analyzer, api_key="test-key", upload_dir=tmp_path / "uploads", auth_db=tmp_path / "accounts.sqlite3")) as client:
         job = client.post("/api/v1/analyze", headers=KEY, files={"file": ("a.mov", b"test")}).json()
         result = client.get(f'/api/v1/jobs/{job["job_id"]}', headers=KEY).json()
         assert result["status"] == "failed"
         assert "verdict" not in result
         assert "internal details" not in result["error"]
-    assert not list(tmp_path.iterdir())
+    assert not list((tmp_path / "uploads").iterdir())
 
 
 def test_home_serves_ui_without_exposing_jury_key(client):
+    response = client.post("/auth/api/register", headers={"X-UI-Request": "1"}, json={
+        "name": "API Test", "email": "api@example.test", "password": "local-test-password-123",
+    })
+    assert response.status_code == 201
+    assert "HttpOnly" in response.headers["set-cookie"]
     page = client.get("/")
     assert page.status_code == 200
     assert "Каждый кадр" in page.text
     assert "test-key" not in page.text
-    assert "HttpOnly" in page.headers["set-cookie"]
     assert client.get("/assets/app.js").status_code == 200
     assert client.get("/assets/bee/front.png").status_code == 200
     assert client.get("/.env").status_code == 404
@@ -88,7 +93,9 @@ def test_ui_upload_uses_session_and_csrf_header(client):
     route = "/app/api/v1/analyze"
     files = {"file": ("a.mov", b"test")}
     assert client.post(route, files=files).status_code == 401
-    client.get("/")
+    client.post("/auth/api/register", headers={"X-UI-Request": "1"}, json={
+        "name": "UI Test", "email": "ui@example.test", "password": "local-test-password-123",
+    })
     assert client.post(route, files=files).status_code == 403
     response = client.post(route, files=files, headers={"X-UI-Request": "1"})
     assert response.status_code == 202

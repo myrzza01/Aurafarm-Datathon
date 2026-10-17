@@ -13,12 +13,15 @@
   let timer = null;
   let previewUrl = null;
   let preview = null;
+  let activeGallery = null;
+  const frameDialog = $('frame-dialog');
 
   function timecode(seconds) {
     const value = Math.max(0, Number(seconds) || 0);
-    const minutes = Math.floor(value / 60);
-    const whole = Math.floor(value % 60);
-    const tenth = Math.floor((value % 1) * 10);
+    const tenths = Math.round(value * 10);
+    const minutes = Math.floor(tenths / 600);
+    const whole = Math.floor(tenths / 10) % 60;
+    const tenth = tenths % 10;
     return `${String(minutes).padStart(2, '0')}:${String(whole).padStart(2, '0')}.${tenth}`;
   }
 
@@ -38,6 +41,21 @@
     previewUrl = null;
   }
 
+  function resetResult() {
+    clearPreview();
+    if (frameDialog.open) frameDialog.close();
+    activeGallery = null;
+    $('results').replaceChildren();
+    $('demo-notice').hidden = true;
+    $('demo-controls').hidden = true;
+    $('new-review').hidden = true;
+    $('retry-button').hidden = true;
+    $('job-reference').hidden = true;
+    $('elapsed-time').hidden = false;
+    $('analysis-kicker').textContent = 'ПРОВЕРКА ВИДЕО';
+    panel.hidden = true;
+  }
+
   function selectFile(file) {
     if (busy) return;
     if (!file) return;
@@ -50,7 +68,7 @@
       return;
     }
     runId += 1;
-    clearPreview();
+    resetResult();
     selectedFile = file;
     fileError('');
     $('file-name').textContent = file.name;
@@ -69,7 +87,7 @@
     selectedFile = null;
     runId += 1;
     input.value = '';
-    clearPreview();
+    resetResult();
     $('selected-file').hidden = true;
     panel.hidden = true;
     startButton.disabled = true;
@@ -112,6 +130,10 @@
     startButton.disabled = value || !selectedFile;
     startButton.firstChild.textContent = value ? 'Проверяем… ' : 'Проверить видео ';
     $('remove-file').disabled = value;
+    $('demo-button').disabled = value;
+    $('demo-events').disabled = value;
+    $('demo-empty').disabled = value;
+    $('new-review').disabled = value;
     dropzone.classList.toggle('busy', value);
     panel.setAttribute('aria-busy', String(value));
   }
@@ -194,75 +216,266 @@
     else preview.addEventListener('loadedmetadata', jump, { once: true });
   }
 
-  function renderResult(job) {
-    const events = job.violations || [];
+  function frameSource(frame, demo) {
+    if (demo && /^\/assets\/demo\/[\w-]+\.svg$/.test(frame.demo_image_url || '')) return frame.demo_image_url;
+    return `data:image/jpeg;base64,${frame.image_base64}`;
+  }
+
+  function updateFrameDialog() {
+    if (!activeGallery) return;
+    const { frames, index, demo, title } = activeGallery;
+    const frame = frames[index];
+    $('frame-dialog-title').textContent = title;
+    $('frame-dialog-kicker').textContent = demo ? 'УЧЕБНАЯ СХЕМА / НЕ ВИДЕОКАДР' : 'КАДР-ДОКАЗАТЕЛЬСТВО';
+    $('dialog-frame-image').src = frameSource(frame, demo);
+    $('dialog-frame-image').alt = `${demo ? 'Учебная схема' : 'Кадр'}: ${title}, ${timecode(frame.timestamp_sec)}`;
+    $('dialog-frame-position').textContent = `${index + 1} из ${frames.length} · ${timecode(frame.timestamp_sec)}`;
+    $('previous-frame').disabled = index === 0;
+    $('next-frame').disabled = index === frames.length - 1;
+  }
+
+  function moveFrame(step) {
+    if (!activeGallery) return;
+    const next = activeGallery.index + step;
+    if (next < 0 || next >= activeGallery.frames.length) return;
+    activeGallery.select(next);
+    updateFrameDialog();
+  }
+
+  $('close-frame-dialog').addEventListener('click', () => frameDialog.close());
+  $('previous-frame').addEventListener('click', () => moveFrame(-1));
+  $('next-frame').addEventListener('click', () => moveFrame(1));
+  frameDialog.addEventListener('click', (event) => {
+    const bounds = frameDialog.getBoundingClientRect();
+    if (event.target === frameDialog && (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)) frameDialog.close();
+  });
+  frameDialog.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+      moveFrame(event.key === 'ArrowRight' ? 1 : -1);
+    }
+  });
+
+  function renderGallery(event, demo) {
+    const gallery = node('div', 'frame-gallery');
+    const frames = event.evidence_frames || [];
+    if (!frames.length) {
+      gallery.append(node('p', 'review-note', 'Кадры не переданы. Для проверки события нужно визуальное подтверждение.'));
+      return gallery;
+    }
+    const heading = node('div', 'gallery-heading');
+    const position = node('span', 'gallery-position');
+    heading.append(node('span', 'section-index', demo ? 'УЧЕБНЫЕ СХЕМЫ' : 'КАДРЫ-ДОКАЗАТЕЛЬСТВА'), position);
+    const stage = node('button', 'frame-stage');
+    stage.type = 'button';
+    stage.setAttribute('aria-label', 'Увеличить выбранный кадр');
+    const image = node('img');
+    const expand = node('span', 'frame-expand', 'Открыть крупнее ↗');
+    stage.append(image, expand);
+    const thumbnails = node('div', 'frame-thumbnails');
+    thumbnails.setAttribute('role', 'group');
+    thumbnails.setAttribute('aria-label', 'Выбор кадра события');
+    const buttons = frames.map((frame, index) => {
+      const button = node('button', 'frame-thumbnail');
+      button.type = 'button';
+      button.setAttribute('aria-label', `${demo ? 'Учебная схема' : 'Кадр'} ${index + 1}, ${timecode(frame.timestamp_sec)}`);
+      const thumb = node('img');
+      thumb.src = frameSource(frame, demo);
+      thumb.alt = '';
+      button.append(thumb, node('span', '', timecode(frame.timestamp_sec)));
+      button.addEventListener('click', () => select(index));
+      button.addEventListener('keydown', (e) => {
+        if (!['ArrowLeft', 'ArrowRight'].includes(e.key)) return;
+        e.preventDefault();
+        const next = (index + (e.key === 'ArrowRight' ? 1 : -1) + frames.length) % frames.length;
+        select(next);
+        buttons[next].focus();
+      });
+      return button;
+    });
+    function select(index) {
+      const frame = frames[index];
+      image.src = frameSource(frame, demo);
+      image.alt = `${demo ? 'Учебная схема' : 'Кадр'}: ${event.type}, ${timecode(frame.timestamp_sec)}`;
+      position.textContent = `${index + 1} из ${frames.length} · ${timecode(frame.timestamp_sec)}`;
+      buttons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
+      activeGallery = { frames, index, demo, title: event.type, select };
+      if (frameDialog.open) updateFrameDialog();
+    }
+    stage.addEventListener('click', () => {
+      updateFrameDialog();
+      frameDialog.showModal();
+    });
+    thumbnails.append(...buttons);
+    select(0);
+    gallery.append(heading, stage, thumbnails);
+    return gallery;
+  }
+
+  function renderSource(event, demo) {
+    const card = node('div', 'source-card');
+    card.append(node('span', 'section-index', 'НОРМАТИВНОЕ ОСНОВАНИЕ'));
+    const source = node('p', 'rule-source');
+    const rule = event.rule_source;
+    if (demo) {
+      source.textContent = 'В учебном примере нормативный источник не указан. Здесь будет документ и пункт, связанный с событием.';
+    } else if (rule) {
+      source.append(node('strong', '', `${rule.document}${rule.section ? `, ${rule.section}` : ''}`));
+      if (rule.url) {
+        try {
+          const url = new URL(rule.url);
+          if (['https:', 'http:'].includes(url.protocol)) {
+            const link = node('a', 'source-link', 'Открыть источник ↗');
+            link.href = url.href;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            source.append(link);
+          }
+        } catch { /* Keep the document title if its URL is invalid. */ }
+      }
+    } else {
+      source.textContent = 'Источник правила не передан моделью. Требуется уточнение перед выводом о нарушении.';
+    }
+    card.append(source);
+    return card;
+  }
+
+  function renderResult(job, { demo = false } = {}) {
+    const events = [...(job.violations || [])].sort((a, b) => a.timecode_sec - b.timecode_sec);
     if (!['violation', 'no_violation'].includes(job.verdict) || (job.verdict === 'violation') !== (events.length > 0)) {
       throw new Error('Результат анализа содержит несогласованные данные. Требуется повторная проверка.');
     }
-    showState(job.verdict === 'violation' ? 'Обнаружены признаки возможных нарушений' : 'Нарушение не обнаружено', job.verdict === 'violation' ? `Событий для проверки: ${events.length}. Изучите кадры, описание и источник правила.` : 'В этой видеозаписи модель не выявила признаков возможных нарушений.', 'done');
+    clearPreview();
     const container = $('results');
-    if (events.length) {
-      preview = node('video', 'video-preview');
-      preview.controls = true;
-      preview.preload = 'metadata';
-      preview.playsInline = true;
-      previewUrl = URL.createObjectURL(selectedFile);
-      preview.src = previewUrl;
-      preview.addEventListener('error', () => {
-        container.prepend(node('p', 'review-note', 'Браузер не может воспроизвести кодек этой записи. Кадры-доказательства доступны ниже.'));
-      }, { once: true });
-      container.append(preview);
+    container.replaceChildren();
+    activeGallery = null;
+    const title = demo ? 'Пример результата проверки' : events.length ? 'Обнаружены признаки возможных нарушений' : 'Нарушение не обнаружено';
+    const message = demo
+      ? events.length ? 'Переключайте события, сравнивайте изображения и откройте любое из них крупнее.' : 'В этом учебном сценарии список событий пуст. Это не результат анализа видео.'
+      : events.length ? `Событий для проверки: ${events.length}. Изучите кадры, описание и источник правила.` : 'В этой видеозаписи модель не выявила признаков возможных нарушений.';
+    showState(title, message, 'done');
+    panel.classList.toggle('demo', demo);
+    $('analysis-kicker').textContent = demo ? 'ПРЕДПРОСМОТР / УЧЕБНЫЕ ДАННЫЕ' : 'РЕЗУЛЬТАТ ПРОВЕРКИ';
+    $('demo-notice').hidden = !demo;
+    $('demo-controls').hidden = !demo;
+    $('elapsed-time').hidden = demo;
+    $('new-review').hidden = false;
+    const summary = node('dl', 'review-summary');
+    for (const [label, value] of [
+      [demo ? 'Примеры событий' : 'События', String(events.length).padStart(2, '0')],
+      [demo ? 'Учебные схемы' : 'Кадры', String(events.reduce((total, event) => total + event.evidence_frames.length, 0)).padStart(2, '0')],
+      ['Источник', demo ? 'Учебный пример' : selectedFile?.name || 'Видеозапись'],
+    ]) {
+      const metric = node('div', 'review-metric');
+      metric.append(node('dt', '', label), node('dd', '', value));
+      summary.append(metric);
     }
-    for (const event of events) {
-      const article = node('article', 'result-event');
-      const heading = node('div', 'event-header');
-      const jump = node('button', 'timecode', timecode(event.timecode_sec));
-      jump.type = 'button';
-      jump.setAttribute('aria-label', `Перейти к событию ${timecode(event.timecode_sec)}`);
-      jump.addEventListener('click', () => seek(event.timecode_sec));
-      heading.append(jump, node('h3', '', event.type));
-      article.append(heading, node('p', 'event-description', event.description));
-      const frames = node('div', 'evidence-grid');
-      for (const frame of event.evidence_frames || []) {
-        const figure = node('figure');
-        const image = node('img');
-        image.src = `data:image/jpeg;base64,${frame.image_base64}`;
-        image.alt = `Кадр события «${event.type}» в ${timecode(frame.timestamp_sec)}`;
-        figure.append(image, node('figcaption', '', `КАДР / ${timecode(frame.timestamp_sec)}`));
-        frames.append(figure);
+    container.append(summary);
+    if (!events.length) {
+      const empty = node('div', 'result-empty');
+      empty.append(node('span', 'empty-check', '✓'), node('h3', '', demo ? 'Пример без событий' : 'Нет событий для просмотра'), node('p', '', demo ? 'Так выглядит завершённая проверка, в которой список событий пуст. Переключитесь на сценарий «С событиями», чтобы посмотреть кадры и таймкоды.' : 'Модель не выявила признаков возможных нарушений. Список событий и кадров пуст.'));
+      container.append(empty);
+    } else {
+      const layout = node('div', 'review-layout');
+      const sidebar = node('nav', 'event-sidebar');
+      sidebar.setAttribute('aria-label', 'Список событий');
+      sidebar.append(node('span', 'section-index', demo ? 'УЧЕБНЫЕ СОБЫТИЯ' : 'СОБЫТИЯ ДЛЯ ПРОВЕРКИ'));
+      const content = node('div', 'review-content');
+      if (!demo && selectedFile) {
+        preview = node('video', 'video-preview');
+        preview.controls = true;
+        preview.preload = 'metadata';
+        preview.playsInline = true;
+        previewUrl = URL.createObjectURL(selectedFile);
+        preview.src = previewUrl;
+        preview.addEventListener('error', () => {
+          content.prepend(node('p', 'review-note', 'Браузер не может воспроизвести кодек этой записи. Кадры-доказательства доступны ниже.'));
+        }, { once: true });
+        content.append(preview);
       }
-      article.append(frames);
-      const rule = event.rule_source;
-      const source = node('p', 'rule-source');
-      source.append(node('strong', '', 'Основание: '));
-      if (rule) {
-        source.append(document.createTextNode(`${rule.document}${rule.section ? `, ${rule.section}` : ''}`));
-        if (rule.url) {
-          try {
-            const url = new URL(rule.url);
-            if (['https:', 'http:'].includes(url.protocol)) {
-              const link = node('a', '', ' Открыть источник ↗');
-              link.href = url.href;
-              link.target = '_blank';
-              link.rel = 'noopener noreferrer';
-              source.append(link);
-            }
-          } catch { /* Invalid source URLs are displayed without a link. */ }
-        }
-      } else source.append(document.createTextNode('Источник правила не передан моделью. Требуется уточнение.'));
-      article.append(source);
-      container.append(article);
+      const timeline = node('nav', 'event-timeline');
+      timeline.setAttribute('aria-label', 'Метки событий');
+      timeline.append(node('span', 'section-index', 'ТАЙМКОДЫ'));
+      const detail = node('article', 'event-detail');
+      const announcement = node('p', 'sr-only');
+      announcement.setAttribute('role', 'status');
+      const eventButtons = [];
+      const timeButtons = [];
+      const selectEvent = (index, jump = false) => {
+        const event = events[index];
+        eventButtons.forEach((button, i) => button.setAttribute('aria-current', String(i === index)));
+        timeButtons.forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
+        detail.replaceChildren();
+        detail.append(node('span', 'section-index', `СОБЫТИЕ ${String(index + 1).padStart(2, '0')} / ${String(events.length).padStart(2, '0')}`), node('h3', 'event-detail-title', event.type), node('p', 'event-description', event.description), renderGallery(event, demo), renderSource(event, demo));
+        announcement.textContent = `Выбрано событие ${index + 1}: ${event.type}, ${timecode(event.timecode_sec)}`;
+        if (jump && !demo) seek(event.timecode_sec);
+      };
+      events.forEach((event, index) => {
+        const button = node('button', 'event-select');
+        button.type = 'button';
+        const top = node('span', 'event-select-top');
+        top.append(node('span', 'event-number', String(index + 1).padStart(2, '0')), node('span', 'event-select-time', timecode(event.timecode_sec)));
+        button.append(top, node('strong', '', event.type), node('span', 'event-select-bottom', `${demo ? 'Учебных схем' : 'Кадров'}: ${event.evidence_frames.length} · Посмотреть →`));
+        button.addEventListener('click', () => selectEvent(index, true));
+        sidebar.append(button);
+        eventButtons.push(button);
+        const timeButton = node('button', 'timeline-marker', timecode(event.timecode_sec));
+        timeButton.type = 'button';
+        timeButton.setAttribute('aria-label', `Перейти к событию ${timecode(event.timecode_sec)}`);
+        timeButton.addEventListener('click', () => selectEvent(index, true));
+        timeline.append(timeButton);
+        timeButtons.push(timeButton);
+      });
+      content.append(timeline, detail, announcement);
+      layout.append(sidebar, content);
+      container.append(layout);
+      selectEvent(0);
     }
-    container.append(node('p', 'review-note', 'Результат — подсказка для проверки человеком. Он не является окончательным юридическим или дисциплинарным заключением.'));
+    container.append(node('p', 'review-note', demo ? 'Это только пример интерфейса. Для реального анализа загрузите видео после подключения локальной модели.' : 'Результат — подсказка для проверки человеком. Он не является окончательным юридическим или дисциплинарным заключением.'));
   }
+
+  async function showDemo(scenario = 'events', scroll = true) {
+    if (busy) return;
+    const currentRun = ++runId;
+    $('demo-button').disabled = true;
+    try {
+      const { demoScenarios } = await import('./demo.mjs');
+      if (currentRun !== runId || busy) return;
+      const focusedControl = document.activeElement?.id;
+      resetResult();
+      renderResult(demoScenarios[scenario], { demo: true });
+      progress.hidden = true;
+      $('demo-events').setAttribute('aria-pressed', String(scenario === 'events'));
+      $('demo-empty').setAttribute('aria-pressed', String(scenario === 'empty'));
+      if (['demo-events', 'demo-empty'].includes(focusedControl)) $(focusedControl).focus({ preventScroll: true });
+      if (scroll) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch {
+      showState('Пример не загрузился', 'Обновите страницу и попробуйте открыть пример ещё раз.', 'error');
+    } finally {
+      $('demo-button').disabled = busy;
+    }
+  }
+
+  $('demo-button').addEventListener('click', () => showDemo());
+  $('demo-events').addEventListener('click', () => showDemo('events', false));
+  $('demo-empty').addEventListener('click', () => showDemo('empty', false));
+  $('new-review').addEventListener('click', () => {
+    if (busy) return;
+    runId += 1;
+    selectedFile = null;
+    input.value = '';
+    $('selected-file').hidden = true;
+    startButton.disabled = true;
+    fileError('');
+    resetResult();
+    $('workspace').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    input.focus({ preventScroll: true });
+  });
 
   async function analyze() {
     if (!selectedFile || busy) return;
     const currentRun = ++runId;
-    clearPreview();
-    $('results').replaceChildren();
-    $('retry-button').hidden = true;
-    $('job-reference').hidden = true;
+    resetResult();
     fileError('');
     progress.hidden = false;
     progress.value = 0;

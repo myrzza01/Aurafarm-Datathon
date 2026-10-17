@@ -3,12 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f5f4ef">
+  <meta name="theme-color" content="#fcfafb">
   <meta name="description" content="Проверка видеозаписей кассовых операций с таймкодами и кадрами-доказательствами.">
+  <script src="/assets/arrival.js"></script>
   <title>Forte Vision — проверка видео</title>
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/assets/app.css">
   <script src="/assets/app.js" defer></script>
+  <script src="/assets/account.js" defer></script>
 </head>
 <body>
   <svg xmlns="http://www.w3.org/2000/svg" class="icon-definitions" aria-hidden="true">
@@ -28,15 +30,16 @@
         <a href="#workspace" class="nav-link active">Проверка видео</a>
         <button id="how-button" type="button" class="nav-link" aria-expanded="false" aria-controls="how-panel">Как это работает <span aria-hidden="true">↗</span></button>
       </nav>
-      <span class="local-badge"><span class="status-dot"></span> Локальная обработка</span>
+      <div class="account-actions"><span id="account-name" class="account-name">Личный кабинет</span><button id="logout-button" class="logout-button" type="button">Выйти ↗</button></div>
     </header>
+    <p id="account-error" class="file-error" role="alert" hidden></p>
 
     <main>
       <section class="hero" aria-labelledby="hero-title">
         <div class="hero-content">
           <div class="eyebrow"><span class="small-line"></span> ВНИМАНИЕ К ДЕТАЛЯМ</div>
           <h1 id="hero-title">Каждый кадр<br>под <span class="highlight">контролем<svg viewBox="0 0 380 18" aria-hidden="true"><path d="M3 13Q190-2 377 9"/></svg></span>.</h1>
-          <p class="hero-description">Проверяйте кассовые операции по видео.<br>Возможные нарушения, точные таймкоды<br class="desktop-break"> и кадры, на которые стоит обратить внимание.</p>
+          <p class="hero-description">Проверяйте кассовые операции по видео. Возможные нарушения, точные таймкоды и кадры, на которые стоит обратить внимание.</p>
           <a class="hero-cta" href="#workspace">Начать проверку <svg class="icon"><use href="#i-arrow"/></svg></a>
           <div class="hero-note"><svg class="icon"><use href="#i-shield"/></svg><span>Видео обрабатывается внутри сервиса</span></div>
         </div>
@@ -85,19 +88,32 @@
           </aside>
         </div>
         <div class="integration-note"><span class="status-dot"></span><p><strong>Режим разработки.</strong> Локальная модель ещё не подключена. Можно проверить загрузку видео и работу API.</p></div>
+        <div class="demo-entry">
+          <span class="demo-entry-icon" aria-hidden="true"><svg class="icon"><use href="#i-frame"/></svg></span>
+          <div><span class="section-index">МОЖНО ПОПРОБОВАТЬ СЕЙЧАС</span><h3>Посмотрите, как выглядит результат</h3><p>Учебные события и схемы кадров. Видео загружать не нужно.</p></div>
+          <button id="demo-button" class="secondary-button" type="button">Посмотреть пример <svg class="icon"><use href="#i-arrow"/></svg></button>
+        </div>
       </section>
 
-      <section id="analysis-panel" class="analysis-panel" aria-labelledby="analysis-title" aria-live="polite" hidden>
+      <section id="analysis-panel" class="analysis-panel" aria-labelledby="analysis-title" hidden>
+        <div id="demo-notice" class="demo-notice" hidden><strong>Демонстрация интерфейса</strong><span>События вымышлены, изображения — учебные схемы. Видео не анализировалось.</span></div>
+        <div id="demo-controls" class="demo-controls" hidden><span>Сценарий примера</span><div class="scenario-options" role="group" aria-label="Сценарий примера"><button id="demo-events" type="button" aria-pressed="true">С событиями</button><button id="demo-empty" type="button" aria-pressed="false">Без событий</button></div></div>
         <div class="analysis-heading"><span id="analysis-icon" class="analysis-icon"><svg class="icon"><use href="#i-clock"/></svg></span><div><span class="section-index" id="analysis-kicker">ПРОВЕРКА ВИДЕО</span><h2 id="analysis-title">Загружаем видео</h2></div><span id="elapsed-time" class="elapsed-time">00:00</span></div>
-        <p id="analysis-message"></p>
+        <p id="analysis-message" role="status"></p>
         <progress id="upload-progress" max="100" value="0" aria-label="Загрузка видео"></progress>
         <p id="job-reference" class="job-reference" hidden></p>
         <div id="results" class="results"></div>
         <button id="retry-button" class="secondary-button" type="button" hidden>Повторить проверку <svg class="icon"><use href="#i-arrow"/></svg></button>
+        <button id="new-review" class="secondary-button" type="button" hidden>Новая проверка <svg class="icon"><use href="#i-arrow"/></svg></button>
       </section>
     </main>
     <footer class="footer"><span>fortevision <span class="footer-separator">/</span> Datathon 2026</span><span class="footer-note">Помощник проверяющего. Решение остаётся за человеком.</span><a href="/docs" target="_blank" rel="noopener">API для жюри <span aria-hidden="true">↗</span></a></footer>
     <div class="model-credit">3D-пчёлка: <a href="https://codepen.io/fariati/pen/oNpZRbd" target="_blank" rel="noopener">Ibrahim Fariat</a></div>
   </div>
+  <dialog id="frame-dialog" class="frame-dialog" aria-labelledby="frame-dialog-title">
+    <div class="frame-dialog-header"><div><span class="section-index" id="frame-dialog-kicker">ПРОСМОТР КАДРА</span><h2 id="frame-dialog-title">Кадр события</h2></div><button id="close-frame-dialog" class="icon-button" type="button" aria-label="Закрыть просмотр кадра" autofocus><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <img id="dialog-frame-image" alt="">
+    <div class="frame-dialog-footer"><button id="previous-frame" class="secondary-button" type="button" aria-label="Предыдущий кадр">← Назад</button><span id="dialog-frame-position" role="status"></span><button id="next-frame" class="secondary-button" type="button" aria-label="Следующий кадр">Далее →</button></div>
+  </dialog>
 </body>
 </html>

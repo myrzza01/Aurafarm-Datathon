@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-label="Учебная схема рабочей поверхности, предмет A, 00:13.2">
+<defs><pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#513344" stroke-width=".6"/></pattern><filter id="shadow"><feDropShadow dy="10" stdDeviation="12" flood-opacity=".18"/></filter></defs>
+<rect width="960" height="540" rx="16" fill="#24131e"/><rect width="960" height="540" rx="16" fill="url(#grid)"/>
+<rect x="28" y="24" width="212" height="35" rx="8" fill="#fc9385"/><text x="46" y="47" fill="#4a0221" font-family="Arial,sans-serif" font-size="15" font-weight="bold">УЧЕБНАЯ СХЕМА</text>
+<text x="932" y="48" text-anchor="end" fill="#f8e0eb" font-family="monospace" font-size="20">00:13.2</text>
+<rect x="180" y="125" width="600" height="286" rx="23" fill="#cdb5c0" filter="url(#shadow)"/>
+<rect x="203" y="148" width="554" height="240" rx="12" fill="#eadbe2"/>
+<rect x="228" y="171" width="504" height="194" rx="7" fill="none" stroke="#9c7c8c" stroke-width="2" stroke-dasharray="9 7"/>
+<text x="244" y="193" fill="#765367" font-family="Arial,sans-serif" font-size="13" letter-spacing="2">РАБОЧАЯ ЗОНА</text>
+<rect x="549" y="205" width="136" height="78" rx="8" fill="#9b7d90"/>
+<rect x="559" y="214" width="116" height="56" rx="4" fill="#422437"/>
+<path d="M610 288v18m-29 0h58" stroke="#7f526a" stroke-width="5"/>
+<rect x="237" y="225" width="82" height="60" rx="6" fill="#fcf5f8" transform="rotate(-8 278 255)"/>
+<path d="M254 242h46m-46 10h39m-39 10h25" stroke="#c5aaba" stroke-width="3"/>
+<circle cx="480" cy="449" r="32" fill="#8e6076"/><path d="M423 526v-27q0-31 31-31h52q31 0 31 31v27" fill="#8e6076"/>
+<rect x="273" y="296" width="74" height="48" rx="6" fill="#a31551" transform="rotate(-8 310 320)"/>
+<rect x="254" y="278" width="112" height="84" rx="10" fill="#fc938514" stroke="#fc9385" stroke-width="2.5"/>
+<circle cx="365" cy="278" r="18" fill="#fc9385"/><text x="365" y="284" text-anchor="middle" fill="#4a0221" font-family="Arial,sans-serif" font-size="17" font-weight="bold">A</text>
+<rect x="28" y="451" width="338" height="61" rx="10" fill="#2c1020"/>
+<text x="44" y="477" fill="#fff3f8" font-family="Arial,sans-serif" font-size="17">Положение предмета изменилось</text><text x="44" y="498" fill="#d2acbf" font-family="Arial,sans-serif" font-size="13">Не видеокадр. События вымышлены.</text>
+</svg>

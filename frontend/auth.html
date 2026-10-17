@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#160a11">
+  <meta name="description" content="Вход и регистрация в Forte Vision.">
+  <title>Вход — Forte Vision</title>
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/auth.css">
+  <script defer src="/assets/vendor/three-r128.min.js"></script>
+  <script type="module" src="/assets/portal-transition.mjs"></script>
+  <script defer src="/assets/auth.js"></script>
+</head>
+<body>
+  <canvas id="portal-background" aria-hidden="true"></canvas>
+  <div id="portal-flight" class="portal-flight" role="dialog" aria-modal="true" aria-labelledby="portal-flight-title" hidden>
+    <canvas id="portal-tunnel" aria-hidden="true"></canvas>
+    <div class="portal-flight-header"><span id="portal-flight-title">FORTE VISION</span><button id="skip-portal" type="button">Пропустить <span aria-hidden="true">→</span></button></div>
+    <div class="portal-flight-status" role="status"><span class="flight-status-dot"></span><span id="portal-flight-message">Открываем приложение</span></div>
+  </div>
+  <div class="ambient-light light-magenta" aria-hidden="true"></div>
+  <div class="ambient-light light-coral" aria-hidden="true"></div>
+  <div class="scan-grid" aria-hidden="true"></div>
+  <header class="auth-header">
+    <a class="auth-brand" href="/login" aria-label="Forte Vision — вход"><span class="auth-brand-mark" aria-hidden="true">f<span>v</span></span><span>forte<span class="brand-light">vision</span><span class="brand-dot">.</span></span></a>
+    <span class="local-status"><span></span> Локальная обработка видео</span>
+  </header>
+  <main class="auth-main">
+    <div class="portal-card">
+      <div class="card-aura" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <div class="card-content">
+        <div class="portal-emblem" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="10" y="8" width="28" height="32" rx="7"/><path d="M18 24h12m-5-5 5 5-5 5M24 2v6m0 32v6M2 24h8m28 0h8"/></svg></div>
+        <span class="auth-eyebrow">FORTE VISION / ДОСТУП К СЕРВИСУ</span>
+        <h1 id="auth-title">С возвращением</h1>
+        <p id="auth-description" class="auth-description">Войдите, чтобы перейти к проверке видеозаписей.</p>
+        <nav class="auth-tabs" aria-label="Вход и регистрация"><a id="login-tab" href="/login" aria-current="page">Вход</a><a id="register-tab" href="/register">Регистрация</a></nav>
+        <form id="auth-form">
+          <div id="name-field" class="form-field" hidden>
+            <label for="auth-name">Ваше имя</label>
+            <input id="auth-name" name="name" type="text" autocomplete="name" minlength="2" maxlength="80" placeholder="Как к вам обращаться" disabled>
+          </div>
+          <div class="form-field">
+            <label for="auth-email">Электронная почта</label>
+            <input id="auth-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="254" placeholder="you@example.com" required>
+          </div>
+          <div class="form-field">
+            <label for="auth-password">Пароль</label>
+            <div class="password-input"><input id="auth-password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" placeholder="Введите пароль" aria-describedby="password-hint" required><button class="password-toggle" type="button" data-target="auth-password" aria-label="Показать пароль" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="m4 4 16 16"/></svg></button></div>
+            <p id="password-hint" class="field-hint">Не менее 12 символов.</p>
+          </div>
+          <div id="confirm-field" class="form-field" hidden>
+            <label for="auth-confirm">Повторите пароль</label>
+            <div class="password-input"><input id="auth-confirm" name="password_confirm" type="password" autocomplete="new-password" minlength="12" maxlength="128" placeholder="Ещё раз, чтобы не ошибиться" disabled><button class="password-toggle" type="button" data-target="auth-confirm" aria-label="Показать повтор пароля" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path class="eye-slash" d="m4 4 16 16"/></svg></button></div>
+          </div>
+          <p id="auth-error" class="auth-error" role="alert" hidden></p>
+          <button id="auth-submit" class="portal-button" type="submit"><span id="auth-submit-text">Войти в сервис</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button>
+          <p id="auth-status" class="auth-status" role="status" hidden></p>
+        </form>
+        <p class="auth-switch" id="auth-switch">Ещё нет аккаунта? <a href="/register">Создать аккаунт <span aria-hidden="true">↗</span></a></p>
+        <div class="auth-card-footer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></svg><span>Аккаунт хранится в этом сервисе.<br>Анализ видео выполняется локально.</span></div>
+      </div>
+    </div>
+    <p class="portal-caption"><span></span> Внимание к каждому кадру</p>
+  </main>
+  <footer class="auth-footer"><span>Forte Vision <span class="footer-divider">/</span> Datathon 2026</span><span>Стиль портала — <a href="https://codepen.io/matt-cannon/pen/OPPJLNa" target="_blank" rel="noopener noreferrer">Matt Cannon</a></span></footer>
+</body>
+</html>
