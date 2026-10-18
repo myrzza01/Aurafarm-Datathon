@@ -28,3 +28,4 @@ server-start*.json
 !weights/temporal_candidate.pt
 !weights/reviewed_detector.pt
 !weights/hard_negative_detector.pt
+!weights/event_localizer_detector.pt

@@ -24,12 +24,12 @@ def test_shipped_detector_is_available_without_configuration(monkeypatch):
     assert not analyzer_configured()
 
 
-def test_default_checkpoint_prefers_refit_then_reviewed_then_binary(tmp_path, monkeypatch):
+def test_default_checkpoint_prefers_localizer_then_refit_then_reviewed_then_binary(tmp_path, monkeypatch):
     import backend.cashwatch_adapter as adapter
     monkeypatch.delenv('CASHWATCH_CHECKPOINT', raising=False)
     monkeypatch.setattr(adapter, 'WEIGHTS_DIR', tmp_path)
-    monkeypatch.setattr(adapter, 'DEFAULT_CHECKPOINT', tmp_path / 'hard_negative_detector.pt')
-    for filename in ('detector.pt', 'reviewed_detector.pt', 'hard_negative_detector.pt'):
+    monkeypatch.setattr(adapter, 'DEFAULT_CHECKPOINT', tmp_path / 'event_localizer_detector.pt')
+    for filename in ('detector.pt', 'reviewed_detector.pt', 'hard_negative_detector.pt', 'event_localizer_detector.pt'):
         checkpoint = tmp_path / filename
         checkpoint.write_bytes(b'Path selection fixture; never loaded as a model')
         assert adapter.checkpoint_path() == checkpoint
@@ -38,15 +38,26 @@ def test_default_checkpoint_prefers_refit_then_reviewed_then_binary(tmp_path, mo
     assert adapter.checkpoint_path() == override
 
 
-def test_shipped_backend_and_python_defaults_use_hard_negative_model(monkeypatch):
+def test_shipped_backend_and_python_defaults_use_event_localizer_model(monkeypatch):
+    import hashlib
+    import json
+    import torch
     from backend.cashwatch_adapter import checkpoint_path
     from ml.cashwatch.inference import default_checkpoint_path
     monkeypatch.delenv('CASHWATCH_CHECKPOINT', raising=False)
-    assert checkpoint_path().name == 'hard_negative_detector.pt'
-    assert checkpoint_path() == default_checkpoint_path()
+    checkpoint = checkpoint_path()
+    assert checkpoint.name == 'event_localizer_detector.pt'
+    assert checkpoint == default_checkpoint_path()
+    saved = torch.load(checkpoint, map_location='cpu', weights_only=True)
+    assert saved['format_version'] == 4
+    assert saved['config']['event_localization']['target'] == 'annotated_event_center'
+    report = json.loads((checkpoint.parent / 'event_localizer_report.json').read_text(encoding='utf-8'))
+    assert hashlib.sha256(checkpoint.read_bytes()).hexdigest() == report['checkpoint_sha256']
+    assert saved['config'] == json.loads((checkpoint.parent / 'event_localizer_config.json').read_text(encoding='utf-8'))
 
 
 @pytest.mark.parametrize('filename,kind', [
+    ('event_localizer_detector.pt', 'semantic'),
     ('hard_negative_detector.pt', 'semantic'),
     ('reviewed_detector.pt', 'semantic'),
     ('detector.pt', 'binary'),

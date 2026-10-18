@@ -74,11 +74,12 @@ if __name__ == "__main__":
     default_checkpoint, default_config = next(
         ((root / "weights" / checkpoint, root / "weights" / config)
          for checkpoint, config in (
+             ("event_localizer_detector.pt", "event_localizer_config.json"),
              ("hard_negative_detector.pt", "hard_negative_config.json"),
              ("reviewed_detector.pt", "reviewed_config.json"),
              ("detector.pt", "config.json"),
          ) if (root / "weights" / checkpoint).is_file()),
-        (root / "weights" / "hard_negative_detector.pt", root / "weights" / "hard_negative_config.json"),
+        (root / "weights" / "event_localizer_detector.pt", root / "weights" / "event_localizer_config.json"),
     )
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", default="artifacts/handoff_selected")

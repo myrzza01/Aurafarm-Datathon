@@ -1,0 +1,283 @@
+{
+  "fps": 2.0,
+  "image_size": 224,
+  "clip_frames": 8,
+  "positive_radius_sec": 1.0,
+  "seed": 42,
+  "head_type": "temporal",
+  "model_name": "mobilenetv3_small_100.lamb_in1k",
+  "event_taxonomy": {
+    "status": "human_action_notes_confirmed",
+    "type_ids": [
+      "cash_not_fully_delivered",
+      "customer_identity_not_presented",
+      "accepted_cash_left_exposed",
+      "equipment_left_on",
+      "cash_counting_omitted",
+      "collector_documents_not_presented",
+      "simultaneous_customer_service",
+      "safe_left_open",
+      "safe_key_left_in_lock",
+      "unsecured_storage_on_departure",
+      "workstation_information_left_open",
+      "cash_office_door_left_open",
+      "customer_departed_before_completion",
+      "personal_items_on_cash_desk",
+      "rejected_banknote_recombined_without_check",
+      "customer_cash_combined"
+    ],
+    "types": {
+      "cash_not_fully_delivered": "Неполная выдача суммы",
+      "customer_identity_not_presented": "Документы клиента не представлены",
+      "accepted_cash_left_exposed": "Деньги оставлены вне защищённого хранения",
+      "equipment_left_on": "Оборудование оставлено включённым",
+      "cash_counting_omitted": "Пересчёт банкнот пропущен",
+      "collector_documents_not_presented": "Документы передающего денежный мешок не представлены",
+      "simultaneous_customer_service": "Одновременное обслуживание клиентов",
+      "safe_left_open": "Сейф оставлен открытым",
+      "safe_key_left_in_lock": "Ключ оставлен в замке сейфа",
+      "unsecured_storage_on_departure": "Уход с рабочего места с незапертым сейфом",
+      "workstation_information_left_open": "Информация оставлена открытой",
+      "cash_office_door_left_open": "Дверь кассового кабинета оставлена открытой",
+      "customer_departed_before_completion": "Клиент ушёл до завершения операции",
+      "personal_items_on_cash_desk": "Личные вещи на кассовом столе",
+      "rejected_banknote_recombined_without_check": "Отклонённая банкнота возвращена без проверки",
+      "customer_cash_combined": "Банкноты разных клиентов объединены"
+    },
+    "support": {
+      "cash_not_fully_delivered": {
+        "label": "Неполная выдача суммы",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "customer_identity_not_presented": {
+        "label": "Документы клиента не представлены",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "accepted_cash_left_exposed": {
+        "label": "Деньги оставлены вне защищённого хранения",
+        "groups": 5,
+        "by_split": {
+          "train": 1,
+          "dev": 2,
+          "test": 2
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": true,
+        "generalization_established": false
+      },
+      "equipment_left_on": {
+        "label": "Оборудование оставлено включённым",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "cash_counting_omitted": {
+        "label": "Пересчёт банкнот пропущен",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "collector_documents_not_presented": {
+        "label": "Документы передающего денежный мешок не представлены",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "simultaneous_customer_service": {
+        "label": "Одновременное обслуживание клиентов",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "safe_left_open": {
+        "label": "Сейф оставлен открытым",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "safe_key_left_in_lock": {
+        "label": "Ключ оставлен в замке сейфа",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "unsecured_storage_on_departure": {
+        "label": "Уход с рабочего места с незапертым сейфом",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "workstation_information_left_open": {
+        "label": "Информация оставлена открытой",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "cash_office_door_left_open": {
+        "label": "Дверь кассового кабинета оставлена открытой",
+        "groups": 3,
+        "by_split": {
+          "train": 1,
+          "dev": 1,
+          "test": 1
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": true,
+        "generalization_established": false
+      },
+      "customer_departed_before_completion": {
+        "label": "Клиент ушёл до завершения операции",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "personal_items_on_cash_desk": {
+        "label": "Личные вещи на кассовом столе",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "rejected_banknote_recombined_without_check": {
+        "label": "Отклонённая банкнота возвращена без проверки",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      },
+      "customer_cash_combined": {
+        "label": "Банкноты разных клиентов объединены",
+        "groups": 1,
+        "by_split": {
+          "train": 1,
+          "dev": 0,
+          "test": 0
+        },
+        "minimum_recommended_train_groups": 2,
+        "minimum_train_support_met": false,
+        "all_splits_have_support": false,
+        "generalization_established": false
+      }
+    }
+  },
+  "stage": "frozen_detector_with_point_localizer",
+  "epochs": 25,
+  "training_scope": "all_available_event_localizer_refit",
+  "event_tolerance_sec": 1.0,
+  "action_confidence_calibrated": false,
+  "postprocess": {
+    "threshold": 0.5,
+    "merge_gap_sec": 1.0,
+    "min_hits": 1,
+    "confirmation": "adjacent_2",
+    "confirmation_max_step_sec": 0.75
+  },
+  "event_localization": {
+    "target": "annotated_event_center",
+    "sigma_sec": 0.75,
+    "binary_gate_threshold": 0.5,
+    "postprocess": {
+      "threshold": 0.5,
+      "merge_gap_sec": 1.0,
+      "min_hits": 1,
+      "confirmation": "adjacent_2",
+      "confirmation_max_step_sec": 0.75
+    },
+    "scope": "all40_training_fit_no_independent_quality"
+  }
+}

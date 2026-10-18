@@ -1,6 +1,7 @@
 """Inference uses only pixels and saved weights, never labels or filename features."""
 from __future__ import annotations
 
+import copy
 import time
 from pathlib import Path
 
@@ -14,6 +15,9 @@ from .video import clip_indices, decode_sampled, evidence_frames
 
 def default_checkpoint_path():
     root = Path(__file__).resolve().parents[1]
+    event_localizer = root / "weights" / "event_localizer_detector.pt"
+    if event_localizer.is_file():
+        return event_localizer
     hard_negative = root / "weights" / "hard_negative_detector.pt"
     if hard_negative.is_file():
         return hard_negative
@@ -24,7 +28,8 @@ def default_checkpoint_path():
     return packaged if packaged.is_file() else root / "artifacts" / "cycle" / "selected.pt"
 
 
-def score_frames(model, images, times, device, frames=8, fps=2.0, deadline=None, return_actions=False):
+def score_frames(model, images, times, device, frames=8, fps=2.0, deadline=None, return_actions=False,
+                 return_localization=False):
     features = []
     model.eval()
     with torch.inference_mode():
@@ -34,14 +39,18 @@ def score_frames(model, images, times, device, frames=8, fps=2.0, deadline=None,
             batch = torch.from_numpy(images[start:start+32].copy()).permute(0, 3, 1, 2).to(device).float() / 255
             features.append(model.encode(batch))
         features = torch.cat(features)
-        scores, actions = [], []
+        scores, actions, localization = [], [], []
         for start in range(0, len(times), 64):
             indices = np.stack([clip_indices(times, center, frames, fps) for center in times[start:start+64]])
             windows = features[torch.as_tensor(indices, dtype=torch.long, device=device)]
             scores.extend(model.classify(windows).sigmoid().cpu().tolist())
             if return_actions:
                 actions.extend(model.classify_actions(windows).softmax(-1).cpu().tolist())
+            if return_localization:
+                localization.extend(model.localize(windows).sigmoid().cpu().tolist())
     scores = np.asarray(scores, dtype=np.float64)
+    if return_localization:
+        return scores, np.asarray(actions) if return_actions else None, np.asarray(localization, dtype=np.float64)
     return (scores, np.asarray(actions)) if return_actions else scores
 
 
@@ -64,7 +73,7 @@ class VideoAnalyzer:
         self.device = select_device(device)
         checkpoint = default_checkpoint_path() if checkpoint is None else checkpoint
         saved = torch.load(Path(checkpoint), map_location="cpu", weights_only=True)
-        if saved.get("format_version") not in {1, 2, 3} or saved.get("training_steps", 0) < 1:
+        if saved.get("format_version") not in {1, 2, 3, 4} or saved.get("training_steps", 0) < 1:
             raise ValueError("Expected a trained cashwatch checkpoint")
         self.config = saved["config"]
         self.postprocess = self.config.get("postprocess", {"threshold": self.config.get("threshold", 0.5),
@@ -74,9 +83,19 @@ class VideoAnalyzer:
         if not 0 < self.threshold < 1:
             raise ValueError("threshold must be between 0 and 1")
         # pretrained=False is intentional: inference must never download weights.
-        self.type_ids = self.config.get("event_taxonomy", {}).get("type_ids", []) if saved["format_version"] == 3 else []
+        self.type_ids = self.config.get("event_taxonomy", {}).get("type_ids", []) if saved["format_version"] in {3, 4} else []
+        self.event_localization = None
+        if saved["format_version"] == 4 and "event_localization" in self.config:
+            self.event_localization = copy.deepcopy(self.config["event_localization"])
+            if not isinstance(self.event_localization, dict) or not isinstance(self.event_localization.get("postprocess"), dict):
+                raise ValueError("Expected point-localization configuration and postprocess")
+            gate = self.event_localization.get("binary_gate_threshold")
+            if not isinstance(gate, (int, float)) or not 0 < gate < 1:
+                raise ValueError("Point-localizer binary gate must be between 0 and 1")
+            if threshold is not None:
+                self.event_localization["binary_gate_threshold"] = self.threshold
         self.model = VideoDetector(pretrained=False, head_type=self.config.get("head_type", "temporal"),
-            action_classes=len(self.type_ids)).to(self.device)
+            action_classes=len(self.type_ids), point_localizer=self.event_localization is not None).to(self.device)
         self.model.load_state_dict(saved["model"])
         self.model.eval()
 
@@ -86,8 +105,12 @@ class VideoAnalyzer:
             size=self.config["image_size"], deadline=deadline)
         decoded = time.monotonic()
         scored = score_frames(self.model, images, times, self.device,
-            self.config["clip_frames"], self.config["fps"], deadline, return_actions=bool(self.type_ids))
-        if self.type_ids:
+            self.config["clip_frames"], self.config["fps"], deadline, return_actions=bool(self.type_ids),
+            return_localization=self.event_localization is not None)
+        self.last_localization_scores = None
+        if self.event_localization is not None:
+            scores, self.last_action_scores, self.last_localization_scores = scored
+        elif self.type_ids:
             scores, self.last_action_scores = scored
         else:
             scores, self.last_action_scores = scored, None
@@ -102,7 +125,12 @@ class VideoAnalyzer:
             torch.cuda.reset_peak_memory_stats(self.device)
         deadline = started + timeout_sec
         times, scores, duration = self.score_video(video_path, deadline)
-        events = detect_intervals(times, scores, **self.postprocess)
+        if self.event_localization is not None:
+            localized = np.where(scores >= self.event_localization["binary_gate_threshold"],
+                                 self.last_localization_scores, 0.0)
+            events = detect_intervals(times, localized, **self.event_localization["postprocess"])
+        else:
+            events = detect_intervals(times, scores, **self.postprocess)
         targets = [point for event in events for point in (event["start_sec"], event["timecode_sec"], event["end_sec"])]
         evidence_started = time.monotonic()
         frames = evidence_frames(video_path, targets, deadline)
@@ -137,6 +165,9 @@ class VideoAnalyzer:
             "full_http_request_sec": None,
             "limitation": "Experimental action predictions and conditional rule references require human review. New camera angles untested."
                 if self.type_ids else "Binary experimental detector. No event taxonomy or legal rule mapping."}
+        if self.event_localization is not None:
+            diagnostics["event_localization"] = self.event_localization
+            diagnostics["max_localization_score"] = float(self.last_localization_scores.max())
         return result, diagnostics
 
 

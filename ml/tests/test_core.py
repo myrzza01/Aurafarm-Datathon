@@ -5,6 +5,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import av
 import numpy as np
@@ -13,7 +14,7 @@ from PIL import Image
 
 from cashwatch.data import canonical_name, grouped_split, parse_label, parse_timestamps, preserve_split, resolve_groups
 from cashwatch.evaluation import match_events, detect_intervals, calibrate
-from cashwatch.inference import event_peaks
+from cashwatch.inference import event_peaks, score_frames, VideoAnalyzer
 from cashwatch.model import VideoDetector
 from cashwatch.train import labeled_centers
 from cashwatch.video import clip_indices, decode_sampled, evidence_frames
@@ -152,6 +153,106 @@ class VideoTests(unittest.TestCase):
 
 
 class ModelTests(unittest.TestCase):
+    def test_point_head_training_preserves_all_legacy_weights_and_outputs(self):
+        torch.set_num_threads(2)
+        torch.manual_seed(23)
+        legacy = VideoDetector(pretrained=False, action_classes=2).eval()
+        torch.manual_seed(23)
+        model = VideoDetector(pretrained=False, action_classes=2, point_localizer=True).eval()
+        original = {key: value.clone() for key, value in legacy.state_dict().items()}
+        self.assertTrue(all(torch.equal(value, model.state_dict()[key]) for key, value in original.items()))
+        self.assertFalse(any(key.startswith("localizer.") for key in original))
+        for parameter in model.parameters():
+            parameter.requires_grad_(False)
+        for parameter in model.localizer.parameters():
+            parameter.requires_grad_(True)
+        features = torch.rand(2, 8, model.encoder.conv_head.out_channels)
+        before = model.localize(features).detach().clone()
+        optimizer = torch.optim.SGD(model.localizer.parameters(), lr=0.1)
+        optimizer.zero_grad()
+        model.localize(features).sum().backward()
+        optimizer.step()
+        self.assertFalse(torch.equal(before, model.localize(features)))
+        self.assertTrue(all(torch.equal(value, model.state_dict()[key]) for key, value in original.items()))
+        self.assertTrue(torch.equal(legacy.classify(features), model.classify(features)))
+        self.assertTrue(torch.equal(legacy.classify_actions(features), model.classify_actions(features)))
+        with self.assertRaises(ValueError):
+            legacy.localize(features)
+
+    def test_score_frames_localizer_uses_pixels_and_preserves_legacy_return_values(self):
+        torch.set_num_threads(2)
+        torch.manual_seed(7)
+        model = VideoDetector(pretrained=False, action_classes=2, point_localizer=True).eval()
+        times = np.arange(4) / 2
+        dark = np.zeros((4, 64, 64, 3), dtype=np.uint8)
+        bright = np.random.default_rng(7).integers(0, 256, dark.shape, dtype=np.uint8)
+        binary_only = score_frames(model, dark, times, "cpu", frames=4)
+        binary_actions = score_frames(model, dark, times, "cpu", frames=4, return_actions=True)
+        all_dark = score_frames(model, dark, times, "cpu", frames=4, return_actions=True, return_localization=True)
+        all_bright = score_frames(model, bright, times, "cpu", frames=4, return_localization=True)
+        np.testing.assert_array_equal(binary_only, all_dark[0])
+        np.testing.assert_array_equal(binary_actions[0], all_dark[0])
+        np.testing.assert_array_equal(binary_actions[1], all_dark[1])
+        self.assertEqual(all_dark[2].shape, (4,))
+        self.assertIsNone(all_bright[1])
+        self.assertGreater(float(np.max(np.abs(all_dark[2] - all_bright[2]))), 1e-7)
+
+    def test_format_four_localization_loads_and_gates_event_peaks_without_changing_legacy(self):
+        torch.set_num_threads(2)
+        postprocess = {"threshold": 0.5, "merge_gap_sec": 1.0, "min_hits": 1,
+                       "confirmation": "adjacent_2", "confirmation_max_step_sec": 0.75}
+        localization = {"binary_gate_threshold": 0.5, "postprocess": postprocess}
+        types = ["cash_counting_omitted", "cash_not_fully_delivered"]
+        config = {"fps": 2.0, "image_size": 64, "clip_frames": 8, "head_type": "temporal",
+                  "event_taxonomy": {"type_ids": types}, "postprocess": postprocess,
+                  "event_localization": localization}
+        binary = np.array([.9, .9, .1, .1, .9, .9, .1, .1])
+        local = np.array([.1, .1, .99, .99, .6, .95, .99, .99])
+        times = np.arange(8) / 2
+        actions = np.array([[.99, .01]] * 8)
+        actions[5] = [.01, .99]
+        with tempfile.TemporaryDirectory() as folder:
+            for version in (1, 2, 3, 4):
+                with self.subTest(format_version=version):
+                    source = VideoDetector(pretrained=False, action_classes=2 if version >= 3 else 0,
+                                           point_localizer=version == 4)
+                    checkpoint = Path(folder) / f"v{version}.pt"
+                    torch.save({"format_version": version, "training_steps": 1,
+                                "config": config, "model": source.state_dict()}, checkpoint)
+                    analyzer = VideoAnalyzer(checkpoint, device="cpu")
+                    self.assertEqual(hasattr(analyzer.model, "localizer"), version == 4)
+                    for key, value in source.state_dict().items():
+                        self.assertTrue(torch.equal(value, analyzer.model.state_dict()[key]))
+                    self.assertEqual(analyzer.type_ids, types if version >= 3 else [])
+                    analyzer.last_action_scores = actions
+                    analyzer.last_localization_scores = local if version == 4 else None
+                    analyzer.last_timings = {"decode_sec": 0., "model_sec": 0.}
+                    def evidence(_path, targets, _deadline):
+                        return {target: {"timestamp_sec": float(target), "image_base64": "test"} for target in targets}
+                    with patch.object(analyzer, "score_video", return_value=(times, binary, 3.5)), \
+                            patch("cashwatch.inference.evidence_frames", side_effect=evidence):
+                        result, diagnostics = analyzer.analyze(Path(folder) / "any-name.mov")
+                    expected = [2.5] if version == 4 else [0., 2.]
+                    self.assertEqual([event["timecode_sec"] for event in result["violations"]], expected)
+                    self.assertEqual(diagnostics["postprocess"], postprocess)
+                    if version == 4:
+                        self.assertEqual(result["violations"][0]["type_id"], types[1])
+                        self.assertEqual(diagnostics["event_localization"], localization)
+                        self.assertEqual(diagnostics["max_score"], .9)
+                        overridden = VideoAnalyzer(checkpoint, device="cpu", threshold=.95)
+                        self.assertEqual(overridden.event_localization["binary_gate_threshold"], .95)
+                        self.assertEqual(overridden.event_localization["postprocess"]["threshold"], .5)
+                        self.assertEqual(overridden.config["event_localization"]["binary_gate_threshold"], .5)
+                        overridden.last_action_scores = actions
+                        overridden.last_localization_scores = local
+                        overridden.last_timings = {"decode_sec": 0., "model_sec": 0.}
+                        with patch.object(overridden, "score_video", return_value=(times, binary, 3.5)), \
+                                patch("cashwatch.inference.evidence_frames", side_effect=evidence):
+                            overridden_result, _ = overridden.analyze(Path(folder) / "any-name.mov")
+                        self.assertEqual(overridden_result, {"verdict": "no_violation", "violations": []})
+                    else:
+                        self.assertNotIn("event_localization", diagnostics)
+
     def test_backward_updates_encoder_and_temporal_head(self):
         torch.set_num_threads(2)
         torch.manual_seed(0)

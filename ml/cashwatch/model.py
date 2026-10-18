@@ -1,6 +1,7 @@
 """A trainable image encoder plus temporal convolutional classifier."""
 from __future__ import annotations
 
+import copy
 import torch
 from torch import nn
 import timm
@@ -9,7 +10,7 @@ MODEL_NAME = "mobilenetv3_small_100.lamb_in1k"
 
 
 class VideoDetector(nn.Module):
-    def __init__(self, pretrained=False, head_type="temporal", action_classes=0):
+    def __init__(self, pretrained=False, head_type="temporal", action_classes=0, point_localizer=False):
         super().__init__()
         self.encoder = timm.create_model(MODEL_NAME, pretrained=pretrained, num_classes=0)
         features = self.encoder.conv_head.out_channels
@@ -29,6 +30,9 @@ class VideoDetector(nn.Module):
                 nn.Dropout(0.35), nn.Linear(128, self.action_classes))
         self.register_buffer("mean", torch.tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1))
         self.register_buffer("std", torch.tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1))
+        if point_localizer:
+            # Separate point-supervised head; existing detector weights and API stay intact.
+            self.localizer = copy.deepcopy(self.temporal)
 
     def configure_finetuning(self, unfreeze_encoder=False):
         for param in self.encoder.parameters():
@@ -63,6 +67,17 @@ class VideoDetector(nn.Module):
         batch, length, channels, height, width = clips.shape
         features = self.encode(clips.reshape(batch * length, channels, height, width))
         return self.classify(features.reshape(batch, length, -1))
+
+    def localize(self, embeddings):
+        """Predict proximity to an annotated event center from visual embeddings."""
+        if not hasattr(self, "localizer"):
+            raise ValueError("This checkpoint has no trained point localizer")
+        features = self.normalization(embeddings)
+        if self.head_type == "linear":
+            return self.localizer(features.mean(dim=1)).squeeze(-1)
+        difference = torch.zeros_like(features)
+        difference[:, 1:] = features[:, 1:] - features[:, :-1]
+        return self.localizer(torch.cat([features, difference], dim=-1).transpose(1, 2)).squeeze(-1)
 
     def classify_actions(self, embeddings):
         """Supervised visual action logits; no filename or annotation inputs."""
