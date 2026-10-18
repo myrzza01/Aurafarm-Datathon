@@ -14,6 +14,8 @@ def main():
     default_checkpoint = packaged if packaged.is_file() else root / "artifacts" / "cycle" / "selected.pt"
     if (root / "weights" / "reviewed_detector.pt").is_file():
         default_checkpoint = root / "weights" / "reviewed_detector.pt"
+    if (root / "weights" / "hard_negative_detector.pt").is_file():
+        default_checkpoint = root / "weights" / "hard_negative_detector.pt"
     commands = parser.add_subparsers(dest="command", required=True)
     weights = commands.add_parser("init-weights", help="Download initial encoder once; all later commands use local weights")
     weights.add_argument("--output", type=Path, default=Path("artifacts/pretrained/encoder.pt"))

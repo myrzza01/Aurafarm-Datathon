@@ -77,7 +77,13 @@ def clip_indices(times, center, frames=8, fps=2.0):
 
 
 def evidence_frames(path, targets, deadline=None):
-    """Decode again at original resolution, retaining nearest frames for each target."""
+    """Decode to EOF, retaining nearest original-resolution frames for each target.
+
+    Do not break out of the threaded decoder after the last target. Closing an
+    unfinished PyAV AUTO decoder can deadlock on MOV files while its workers are
+    still active. Exhausting it flushes those workers before container teardown;
+    iter_frames continues enforcing the caller's deadline on every frame.
+    """
     targets = sorted(set(float(x) for x in targets))
     if not targets:
         return {}
@@ -87,8 +93,6 @@ def evidence_frames(path, targets, deadline=None):
             distance = abs(timestamp - target)
             if distance < chosen[target][0]:
                 chosen[target] = (distance, timestamp, frame)
-        if timestamp > targets[-1] + 1:
-            break
     result = {}
     for target, (_, timestamp, frame) in chosen.items():
         if frame is None:

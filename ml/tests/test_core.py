@@ -1,5 +1,7 @@
 import base64
 import io
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -97,6 +99,33 @@ class DataTests(unittest.TestCase):
 
 
 class VideoTests(unittest.TestCase):
+    def test_early_h264_evidence_finishes_in_subprocess(self):
+        # Run native decoder teardown out of process so a stuck FFmpeg worker
+        # fails with a timeout instead of hanging the entire test suite.
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "early-evidence.mov"
+            with av.open(str(path), mode="w") as container:
+                stream = container.add_stream("libx264", rate=30)
+                stream.width, stream.height, stream.pix_fmt = 96, 64, "yuv420p"
+                stream.options = {"preset": "fast", "bf": "3"}
+                for index in range(180):
+                    pixels = np.full((64, 96, 3), index % 255, dtype=np.uint8)
+                    pixels[:, index % 80:index % 80 + 16] = 255
+                    for packet in stream.encode(av.VideoFrame.from_ndarray(pixels, format="rgb24")):
+                        container.mux(packet)
+                for packet in stream.encode():
+                    container.mux(packet)
+            command = (
+                "import sys; from cashwatch.video import evidence_frames; "
+                "result=evidence_frames(sys.argv[1], [0.25, 0.75]); "
+                "assert all(abs(result[t]['timestamp_sec']-t)<0.04 for t in result); "
+                "assert all(result[t]['image_base64'] for t in result); print('ok')"
+            )
+            result = subprocess.run([sys.executable, "-c", command, str(path)],
+                cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+                timeout=30, check=True)
+            self.assertEqual(result.stdout.strip(), "ok")
+
     def test_decode_pts_and_jpeg_evidence(self):
         with tempfile.TemporaryDirectory() as folder:
             path = Path(folder) / "synthetic.mov"

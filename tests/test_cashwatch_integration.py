@@ -16,6 +16,7 @@ from tests.helpers import wait_job
 
 def test_shipped_detector_is_available_without_configuration(monkeypatch):
     monkeypatch.delenv('ANALYZER_CALLABLE', raising=False)
+    monkeypatch.delenv('CASHWATCH_CHECKPOINT', raising=False)
     assert analyzer_configured()
     monkeypatch.setenv('CASHWATCH_CHECKPOINT', '/missing-detector.pt')
     assert not analyzer_configured()
@@ -23,13 +24,40 @@ def test_shipped_detector_is_available_without_configuration(monkeypatch):
     assert not analyzer_configured()
 
 
-def test_health_capability_follows_weights_not_filename(tmp_path, monkeypatch):
+def test_default_checkpoint_prefers_refit_then_reviewed_then_binary(tmp_path, monkeypatch):
+    import backend.cashwatch_adapter as adapter
+    monkeypatch.delenv('CASHWATCH_CHECKPOINT', raising=False)
+    monkeypatch.setattr(adapter, 'WEIGHTS_DIR', tmp_path)
+    monkeypatch.setattr(adapter, 'DEFAULT_CHECKPOINT', tmp_path / 'hard_negative_detector.pt')
+    for filename in ('detector.pt', 'reviewed_detector.pt', 'hard_negative_detector.pt'):
+        checkpoint = tmp_path / filename
+        checkpoint.write_bytes(b'Path selection fixture; never loaded as a model')
+        assert adapter.checkpoint_path() == checkpoint
+    override = tmp_path / 'explicit.pt'
+    monkeypatch.setenv('CASHWATCH_CHECKPOINT', str(override))
+    assert adapter.checkpoint_path() == override
+
+
+def test_shipped_backend_and_python_defaults_use_hard_negative_model(monkeypatch):
+    from backend.cashwatch_adapter import checkpoint_path
+    from ml.cashwatch.inference import default_checkpoint_path
+    monkeypatch.delenv('CASHWATCH_CHECKPOINT', raising=False)
+    assert checkpoint_path().name == 'hard_negative_detector.pt'
+    assert checkpoint_path() == default_checkpoint_path()
+
+
+@pytest.mark.parametrize('filename,kind', [
+    ('hard_negative_detector.pt', 'semantic'),
+    ('reviewed_detector.pt', 'semantic'),
+    ('detector.pt', 'binary'),
+])
+def test_health_capability_follows_weights_not_filename(tmp_path, monkeypatch, filename, kind):
     import shutil
-    from backend.cashwatch_adapter import analyzer_kind, DEFAULT_CHECKPOINT
+    from backend.cashwatch_adapter import analyzer_kind, WEIGHTS_DIR
     renamed = tmp_path / 'renamed.pt'
-    shutil.copyfile(DEFAULT_CHECKPOINT, renamed)
+    shutil.copyfile(WEIGHTS_DIR / filename, renamed)
     monkeypatch.setenv('CASHWATCH_CHECKPOINT', str(renamed))
-    assert analyzer_kind() == 'semantic'
+    assert analyzer_kind() == kind
     renamed.write_bytes(b'not the attested semantic checkpoint')
     assert analyzer_kind() == 'custom_checkpoint'
 
@@ -59,6 +87,7 @@ def test_unmapped_rule_is_explicit_not_a_fabricated_document():
 def test_actual_checkpoint_completes_api_job(tmp_path, mov_bytes, monkeypatch):
     # Real model + weights on a synthetic video. This verifies integration, not accuracy.
     monkeypatch.setenv('ANALYZER_CALLABLE', DEFAULT_ANALYZER)
+    monkeypatch.delenv('CASHWATCH_CHECKPOINT', raising=False)
     monkeypatch.setenv('CASHWATCH_DEVICE', 'cpu')
     app = create_app(api_key='local-ml-test', upload_dir=tmp_path/'uploads', auth_db=tmp_path/'auth.sqlite3')
     headers = {'X-API-Key': 'local-ml-test'}

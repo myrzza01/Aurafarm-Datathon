@@ -7,11 +7,14 @@ import os
 from pathlib import Path
 
 WEIGHTS_DIR = Path(__file__).resolve().parent.parent / "ml" / "weights"
-DEFAULT_CHECKPOINT = WEIGHTS_DIR / "reviewed_detector.pt"
+DEFAULT_CHECKPOINT = WEIGHTS_DIR / "hard_negative_detector.pt"
 
 
 def checkpoint_path() -> Path:
-    default = DEFAULT_CHECKPOINT if DEFAULT_CHECKPOINT.is_file() else WEIGHTS_DIR / "detector.pt"
+    legacy = WEIGHTS_DIR / "detector.pt"
+    default = next((path for path in (
+        DEFAULT_CHECKPOINT, WEIGHTS_DIR / "reviewed_detector.pt", legacy
+    ) if path.is_file()), legacy)
     return Path(os.environ.get("CASHWATCH_CHECKPOINT", str(default))).expanduser().resolve()
 
 
@@ -31,10 +34,12 @@ def analyzer_kind() -> str:
     try:
         stat = path.stat()
         digest = _checkpoint_hash(str(path), stat.st_size, stat.st_mtime_ns)
-        report_path = WEIGHTS_DIR / "reviewed_report.json"
-        if report_path.is_file():
-            report = json.loads(report_path.read_text(encoding="utf-8"))
-            if digest == report.get("checkpoint_sha256"):
+        for report_name in ("hard_negative_report.json", "reviewed_report.json"):
+            try:
+                report = json.loads((WEIGHTS_DIR / report_name).read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                continue
+            if isinstance(report, dict) and digest == report.get("checkpoint_sha256"):
                 return "semantic"
         source = json.loads((WEIGHTS_DIR.parent / "SOURCE.json").read_text(encoding="utf-8"))
         if digest in source.get("sha256", {}).values():

@@ -71,9 +71,18 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     root = Path(__file__).resolve().parents[1]
+    default_checkpoint, default_config = next(
+        ((root / "weights" / checkpoint, root / "weights" / config)
+         for checkpoint, config in (
+             ("hard_negative_detector.pt", "hard_negative_config.json"),
+             ("reviewed_detector.pt", "reviewed_config.json"),
+             ("detector.pt", "config.json"),
+         ) if (root / "weights" / checkpoint).is_file()),
+        (root / "weights" / "hard_negative_detector.pt", root / "weights" / "hard_negative_config.json"),
+    )
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", default="artifacts/handoff_selected")
-    parser.add_argument("--checkpoint", default=root / "weights" / "reviewed_detector.pt")
-    parser.add_argument("--config", default=root / "weights" / "reviewed_config.json")
+    parser.add_argument("--checkpoint", default=default_checkpoint)
+    parser.add_argument("--config", default=default_config)
     args = parser.parse_args()
     package(args.output, args.checkpoint, args.config)

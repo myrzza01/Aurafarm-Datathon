@@ -14,6 +14,9 @@ from .video import clip_indices, decode_sampled, evidence_frames
 
 def default_checkpoint_path():
     root = Path(__file__).resolve().parents[1]
+    hard_negative = root / "weights" / "hard_negative_detector.pt"
+    if hard_negative.is_file():
+        return hard_negative
     reviewed = root / "weights" / "reviewed_detector.pt"
     if reviewed.is_file():
         return reviewed

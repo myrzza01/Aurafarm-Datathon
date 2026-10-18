@@ -1,0 +1,7081 @@
+{
+  "schema_version": 1,
+  "checkpoint": "ml/weights/hard_negative_detector.pt",
+  "checkpoint_sha256": "4d54d68d0c4dc5e01fefbcb6b26482bcae083379a5b22aca39dfba5788a5cb73",
+  "source_checkpoint_sha256": "3d47fcb8b5d4eaa100a0530eaa0646ffe2cd4c66e669993eb4828b372afedd44",
+  "evaluated_utc": "2026-10-18T06:11:46.466377+00:00",
+  "scope": "All videos overlap training; accuracy is measured on the training set, not independent generalization.",
+  "independent_quality_established": false,
+  "data": {
+    "input_files": 42,
+    "unique_videos": 40,
+    "positive_videos": 21,
+    "negative_videos": 19,
+    "annotated_events": 22,
+    "manifest_sha256": "90d78ef87ddbc20e07cdbd585a509853b9339c890102ec97b43e572f449d3e38",
+    "original_workbook_sha256": "4faf595a2679c2f8b2b41be041de59bb3c11cd6e77d57226f1cbcc14b2cc3e75",
+    "reviewed_workbook_sha256": "f5793b7117e088306016fbbacf8d9f31a5fab3bb1c31a8566880f4d0707958f2",
+    "deduplication": "Exact SHA-256 duplicates counted once in primary metrics; all 42 files uploaded."
+  },
+  "training": {
+    "source_checkpoint_sha256": "3d47fcb8b5d4eaa100a0530eaa0646ffe2cd4c66e669993eb4828b372afedd44",
+    "manifest_sha256": "90d78ef87ddbc20e07cdbd585a509853b9339c890102ec97b43e572f449d3e38",
+    "videos": 40,
+    "all_videos_used_for_training": true,
+    "independent_quality_established": false,
+    "frozen": [
+      "encoder",
+      "normalization",
+      "action_head"
+    ],
+    "trained": [
+      "temporal"
+    ],
+    "negative_windows": 1521,
+    "positive_windows": 110,
+    "negative_supervision": "All sampled windows in negative-labelled videos; original label provenance retained.",
+    "positive_supervision": "Only annotated timestamps +/-1 s; other positive-video regions remain unlabeled.",
+    "postprocess": {
+      "threshold": 0.5,
+      "merge_gap_sec": 1.0,
+      "min_hits": 1,
+      "confirmation": "adjacent_2",
+      "confirmation_max_step_sec": 0.75
+    },
+    "epochs": 100,
+    "seed": 42,
+    "initialization": "current deployed checkpoint",
+    "selection": "Training video errors, then missed/wrong typed events, then typed false positives; never independent validation.",
+    "selected_epoch": 60,
+    "frozen_modules_unchanged": true,
+    "checkpoint_metadata": "Base checkpoint metadata/config retained; hard_negative_refit records this update."
+  },
+  "validation": {
+    "method": "Fresh multipart upload and asynchronous API polling for every source file; response/JPEG schema validated.",
+    "completed_files": 42,
+    "failed_files": 0,
+    "all_jpeg_schemas_valid": true,
+    "direct_inference_parity_mismatches": [],
+    "duplicate_prediction_disagreements": [],
+    "checkpoint_unchanged": true,
+    "video_py_sha256": "24c32790aeaa057378ae53c9d00228bad8c76ec1e3fad95dbeefba317a23beaa",
+    "environment": "Windows, Python 3.12, PyTorch 2.7.1+cu128, RTX 5070; local API",
+    "platform_scope": "This checkpoint has not been revalidated in WSL, Docker or public HTTPS.",
+    "repository_checks": {
+      "command": "python -m pytest tests ml/tests -q",
+      "passed_tests": 126,
+      "passed_subtests": 11,
+      "elapsed_sec": 46.36,
+      "standalone_package_checkpoint_and_config_match": true,
+      "cli_default_checkpoint": "hard_negative_detector.pt"
+    }
+  },
+  "threshold": 0.5,
+  "time_tolerance_sec": 5,
+  "binary_unique": {
+    "tp": 21,
+    "fp": 0,
+    "fn": 0,
+    "tn": 19,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "balanced_accuracy": 1.0,
+    "correct": 40,
+    "total": 40,
+    "accuracy": 1.0
+  },
+  "binary_all_files": {
+    "tp": 22,
+    "fp": 0,
+    "fn": 0,
+    "tn": 20,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "balanced_accuracy": 1.0,
+    "correct": 42,
+    "total": 42,
+    "accuracy": 1.0
+  },
+  "fully_correct_videos": {
+    "correct": 33,
+    "total": 40,
+    "rate": 0.825,
+    "definition": "Correct verdict AND all annotated events matched with correct type within +/-5sec AND no unmatched predictions."
+  },
+  "event_metrics": {
+    "tolerance_sec": 5.0,
+    "video_count": 40,
+    "ground_truth_events": 22,
+    "typed_ground_truth_events": 22,
+    "untyped_ground_truth_events": 0,
+    "predicted_events": 27,
+    "predictions_excluded_for_untyped_matched_truth": 0,
+    "detection": {
+      "tp": 21,
+      "fp": 6,
+      "fn": 1,
+      "precision": 0.7777777777777778,
+      "recall": 0.9545454545454546,
+      "f1": 0.8571428571428571,
+      "matched": 21,
+      "missed": 1,
+      "extra": 6,
+      "errors_sec": [
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.5,
+        0.0,
+        0.5,
+        3.5,
+        0.0,
+        0.5,
+        2.0,
+        0.5,
+        1.0,
+        0.5,
+        0.5,
+        0.5,
+        0.0,
+        0.0,
+        0.5,
+        0.5,
+        0.5
+      ],
+      "matched_mae_sec": 0.6428571428571429
+    },
+    "typed": {
+      "tp": 20,
+      "fp": 7,
+      "fn": 2,
+      "precision": 0.7407407407407407,
+      "recall": 0.9090909090909091,
+      "f1": 0.8163265306122449,
+      "type_correct_matched": 20,
+      "wrong_type_matched": 1,
+      "missed_typed_truth": 1,
+      "unmatched_alerts": 6,
+      "classification_accuracy_on_temporally_matched_typed_events": 0.9523809523809523,
+      "macro_f1_supported": 0.8677083333333333
+    },
+    "per_class": {
+      "accepted_cash_left_exposed": {
+        "tp": 4,
+        "fp": 1,
+        "fn": 1,
+        "precision": 0.8,
+        "recall": 0.8,
+        "f1": 0.8,
+        "support": 5
+      },
+      "cash_counting_omitted": {
+        "tp": 0,
+        "fp": 2,
+        "fn": 1,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 1
+      },
+      "cash_not_fully_delivered": {
+        "tp": 1,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6666666666666666,
+        "support": 1
+      },
+      "cash_office_door_left_open": {
+        "tp": 3,
+        "fp": 2,
+        "fn": 0,
+        "precision": 0.6,
+        "recall": 1.0,
+        "f1": 0.75,
+        "support": 3
+      },
+      "collector_documents_not_presented": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      "customer_cash_combined": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      "customer_departed_before_completion": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      "customer_identity_not_presented": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      "equipment_left_on": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      "personal_items_on_cash_desk": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      "rejected_banknote_recombined_without_check": {
+        "tp": 1,
+        "fp": 1,
+        "fn": 0,
+        "precision": 0.5,
+        "recall": 1.0,
+        "f1": 0.6666666666666666,
+        "support": 1
+      },
+      "safe_key_left_in_lock": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      "safe_left_open": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      "simultaneous_customer_service": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      "unsecured_storage_on_departure": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      },
+      "workstation_information_left_open": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 1
+      }
+    },
+    "videos": [
+      {
+        "video_id": "x-17",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 7.0,
+            "predicted_sec": 7.5,
+            "error_sec": 0.5,
+            "truth_type_id": "collector_documents_not_presented",
+            "predicted_type_id": "collector_documents_not_presented",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-30",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 1,
+          "missed": 0,
+          "extra": 1,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 1,
+            "truth_sec": 13.0,
+            "predicted_sec": 13.5,
+            "error_sec": 0.5,
+            "truth_type_id": "cash_office_door_left_open",
+            "predicted_type_id": "cash_office_door_left_open",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 0,
+            "timecode_sec": 4.5,
+            "type_id": "cash_office_door_left_open"
+          }
+        ]
+      },
+      {
+        "video_id": "x-19",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-5",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-33",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 6.0,
+            "predicted_sec": 6.5,
+            "error_sec": 0.5,
+            "truth_type_id": "cash_office_door_left_open",
+            "predicted_type_id": "cash_office_door_left_open",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-3",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-35",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-43",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-16",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-45",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-4",
+        "counts": {
+          "truth": 2,
+          "known_truth": 2,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 2,
+          "missed": 0,
+          "extra": 0,
+          "correct": 2,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 57.0,
+            "predicted_sec": 56.5,
+            "error_sec": 0.5,
+            "truth_type_id": "accepted_cash_left_exposed",
+            "predicted_type_id": "accepted_cash_left_exposed",
+            "category": "type_correct"
+          },
+          {
+            "truth_event_index": 1,
+            "predicted_event_index": 1,
+            "truth_sec": 68.0,
+            "predicted_sec": 67.5,
+            "error_sec": 0.5,
+            "truth_type_id": "customer_cash_combined",
+            "predicted_type_id": "customer_cash_combined",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-10",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-38",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 1,
+          "missed": 0,
+          "extra": 1,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 33.0,
+            "predicted_sec": 33.0,
+            "error_sec": 0.0,
+            "truth_type_id": "accepted_cash_left_exposed",
+            "predicted_type_id": "accepted_cash_left_exposed",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 1,
+            "timecode_sec": 53.5,
+            "type_id": "accepted_cash_left_exposed"
+          }
+        ]
+      },
+      {
+        "video_id": "x-46",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 1,
+          "missed": 0,
+          "extra": 1,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 1,
+            "truth_sec": 11.0,
+            "predicted_sec": 11.5,
+            "error_sec": 0.5,
+            "truth_type_id": "accepted_cash_left_exposed",
+            "predicted_type_id": "accepted_cash_left_exposed",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 0,
+            "timecode_sec": 3.0,
+            "type_id": "rejected_banknote_recombined_without_check"
+          }
+        ]
+      },
+      {
+        "video_id": "x-15",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 1,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 15.0,
+            "predicted_sec": 11.5,
+            "error_sec": 3.5,
+            "truth_type_id": "accepted_cash_left_exposed",
+            "predicted_type_id": "cash_counting_omitted",
+            "category": "wrong_type"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-8",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-40",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 17.0,
+            "predicted_sec": 17.0,
+            "error_sec": 0.0,
+            "truth_type_id": "personal_items_on_cash_desk",
+            "predicted_type_id": "personal_items_on_cash_desk",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-31",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-14",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-20",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 5.0,
+            "predicted_sec": 5.5,
+            "error_sec": 0.5,
+            "truth_type_id": "safe_left_open",
+            "predicted_type_id": "safe_left_open",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-1",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 1,
+          "missed": 0,
+          "extra": 1,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 1,
+            "truth_sec": 22.0,
+            "predicted_sec": 24.0,
+            "error_sec": 2.0,
+            "truth_type_id": "cash_not_fully_delivered",
+            "predicted_type_id": "cash_not_fully_delivered",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 0,
+            "timecode_sec": 13.5,
+            "type_id": "cash_not_fully_delivered"
+          }
+        ]
+      },
+      {
+        "video_id": "x-25",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-18",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 20.0,
+            "predicted_sec": 20.5,
+            "error_sec": 0.5,
+            "truth_type_id": "simultaneous_customer_service",
+            "predicted_type_id": "simultaneous_customer_service",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-12",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-44",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 16.0,
+            "predicted_sec": 15.0,
+            "error_sec": 1.0,
+            "truth_type_id": "rejected_banknote_recombined_without_check",
+            "predicted_type_id": "rejected_banknote_recombined_without_check",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-2",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 10.0,
+            "predicted_sec": 9.5,
+            "error_sec": 0.5,
+            "truth_type_id": "customer_identity_not_presented",
+            "predicted_type_id": "customer_identity_not_presented",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-13",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 0,
+          "missed": 1,
+          "extra": 1,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 1,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [
+          {
+            "truth_event_index": 0,
+            "timecode_sec": 47.0,
+            "type_id": "cash_counting_omitted"
+          }
+        ],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 0,
+            "timecode_sec": 58.5,
+            "type_id": "cash_counting_omitted"
+          }
+        ]
+      },
+      {
+        "video_id": "x-37",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-11",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 18.0,
+            "predicted_sec": 17.5,
+            "error_sec": 0.5,
+            "truth_type_id": "equipment_left_on",
+            "predicted_type_id": "equipment_left_on",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-23",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-29",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-32",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 1,
+          "missed": 0,
+          "extra": 1,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 5.0,
+            "predicted_sec": 5.5,
+            "error_sec": 0.5,
+            "truth_type_id": "cash_office_door_left_open",
+            "predicted_type_id": "cash_office_door_left_open",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 1,
+            "timecode_sec": 11.5,
+            "type_id": "cash_office_door_left_open"
+          }
+        ]
+      },
+      {
+        "video_id": "x-24",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 8.0,
+            "predicted_sec": 8.0,
+            "error_sec": 0.0,
+            "truth_type_id": "unsecured_storage_on_departure",
+            "predicted_type_id": "unsecured_storage_on_departure",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-22",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 14.0,
+            "predicted_sec": 14.0,
+            "error_sec": 0.0,
+            "truth_type_id": "safe_key_left_in_lock",
+            "predicted_type_id": "safe_key_left_in_lock",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-28",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 7.0,
+            "predicted_sec": 7.5,
+            "error_sec": 0.5,
+            "truth_type_id": "workstation_information_left_open",
+            "predicted_type_id": "workstation_information_left_open",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-27",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-39",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-26",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 9.0,
+            "predicted_sec": 9.5,
+            "error_sec": 0.5,
+            "truth_type_id": "accepted_cash_left_exposed",
+            "predicted_type_id": "accepted_cash_left_exposed",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-21",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      {
+        "video_id": "x-34",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 13.0,
+            "predicted_sec": 12.5,
+            "error_sec": 0.5,
+            "truth_type_id": "customer_departed_before_completion",
+            "predicted_type_id": "customer_departed_before_completion",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      }
+    ],
+    "matching": "One-to-one monotone temporal matching: maximum cardinality, minimum total absolute timing error, then type agreement between equally good monotone solutions.",
+    "scope": "End-to-end detected typed events; includes detector misses, wrong types, and unmatched alerts. Human-unverified truth types are explicitly excluded from typed scoring."
+  },
+  "sensitivity": {
+    "1": {
+      "tolerance_sec": 1.0,
+      "video_count": 40,
+      "ground_truth_events": 22,
+      "typed_ground_truth_events": 22,
+      "untyped_ground_truth_events": 0,
+      "predicted_events": 27,
+      "predictions_excluded_for_untyped_matched_truth": 0,
+      "detection": {
+        "tp": 19,
+        "fp": 8,
+        "fn": 3,
+        "precision": 0.7037037037037037,
+        "recall": 0.8636363636363636,
+        "f1": 0.7755102040816326,
+        "matched": 19,
+        "missed": 3,
+        "extra": 8,
+        "errors_sec": [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.0,
+          0.5,
+          0.0,
+          0.5,
+          0.5,
+          1.0,
+          0.5,
+          0.5,
+          0.5,
+          0.0,
+          0.0,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "matched_mae_sec": 0.42105263157894735
+      },
+      "typed": {
+        "tp": 19,
+        "fp": 8,
+        "fn": 3,
+        "precision": 0.7037037037037037,
+        "recall": 0.8636363636363636,
+        "f1": 0.7755102040816326,
+        "type_correct_matched": 19,
+        "wrong_type_matched": 0,
+        "missed_typed_truth": 3,
+        "unmatched_alerts": 8,
+        "classification_accuracy_on_temporally_matched_typed_events": 1.0,
+        "macro_f1_supported": 0.8260416666666667
+      },
+      "per_class": {
+        "accepted_cash_left_exposed": {
+          "tp": 4,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.8,
+          "recall": 0.8,
+          "f1": 0.8,
+          "support": 5
+        },
+        "cash_counting_omitted": {
+          "tp": 0,
+          "fp": 2,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1
+        },
+        "cash_not_fully_delivered": {
+          "tp": 0,
+          "fp": 2,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1
+        },
+        "cash_office_door_left_open": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "support": 3
+        },
+        "collector_documents_not_presented": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "customer_cash_combined": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "customer_departed_before_completion": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "customer_identity_not_presented": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "equipment_left_on": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "personal_items_on_cash_desk": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "rejected_banknote_recombined_without_check": {
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "support": 1
+        },
+        "safe_key_left_in_lock": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "safe_left_open": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "simultaneous_customer_service": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "unsecured_storage_on_departure": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "workstation_information_left_open": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        }
+      },
+      "videos": [
+        {
+          "video_id": "x-17",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 7.0,
+              "predicted_sec": 7.5,
+              "error_sec": 0.5,
+              "truth_type_id": "collector_documents_not_presented",
+              "predicted_type_id": "collector_documents_not_presented",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-30",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 1,
+              "truth_sec": 13.0,
+              "predicted_sec": 13.5,
+              "error_sec": 0.5,
+              "truth_type_id": "cash_office_door_left_open",
+              "predicted_type_id": "cash_office_door_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 4.5,
+              "type_id": "cash_office_door_left_open"
+            }
+          ]
+        },
+        {
+          "video_id": "x-19",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-5",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-33",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 6.0,
+              "predicted_sec": 6.5,
+              "error_sec": 0.5,
+              "truth_type_id": "cash_office_door_left_open",
+              "predicted_type_id": "cash_office_door_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-3",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-35",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-43",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-16",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-45",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-4",
+          "counts": {
+            "truth": 2,
+            "known_truth": 2,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 2,
+            "missed": 0,
+            "extra": 0,
+            "correct": 2,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 57.0,
+              "predicted_sec": 56.5,
+              "error_sec": 0.5,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            },
+            {
+              "truth_event_index": 1,
+              "predicted_event_index": 1,
+              "truth_sec": 68.0,
+              "predicted_sec": 67.5,
+              "error_sec": 0.5,
+              "truth_type_id": "customer_cash_combined",
+              "predicted_type_id": "customer_cash_combined",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-10",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-38",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 33.0,
+              "predicted_sec": 33.0,
+              "error_sec": 0.0,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 1,
+              "timecode_sec": 53.5,
+              "type_id": "accepted_cash_left_exposed"
+            }
+          ]
+        },
+        {
+          "video_id": "x-46",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 1,
+              "truth_sec": 11.0,
+              "predicted_sec": 11.5,
+              "error_sec": 0.5,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 3.0,
+              "type_id": "rejected_banknote_recombined_without_check"
+            }
+          ]
+        },
+        {
+          "video_id": "x-15",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 0,
+            "missed": 1,
+            "extra": 1,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 1,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [
+            {
+              "truth_event_index": 0,
+              "timecode_sec": 15.0,
+              "type_id": "accepted_cash_left_exposed"
+            }
+          ],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 11.5,
+              "type_id": "cash_counting_omitted"
+            }
+          ]
+        },
+        {
+          "video_id": "x-8",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-40",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 17.0,
+              "predicted_sec": 17.0,
+              "error_sec": 0.0,
+              "truth_type_id": "personal_items_on_cash_desk",
+              "predicted_type_id": "personal_items_on_cash_desk",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-31",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-14",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-20",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 5.0,
+              "predicted_sec": 5.5,
+              "error_sec": 0.5,
+              "truth_type_id": "safe_left_open",
+              "predicted_type_id": "safe_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-1",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 0,
+            "missed": 1,
+            "extra": 2,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 1,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [
+            {
+              "truth_event_index": 0,
+              "timecode_sec": 22.0,
+              "type_id": "cash_not_fully_delivered"
+            }
+          ],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 13.5,
+              "type_id": "cash_not_fully_delivered"
+            },
+            {
+              "predicted_event_index": 1,
+              "timecode_sec": 24.0,
+              "type_id": "cash_not_fully_delivered"
+            }
+          ]
+        },
+        {
+          "video_id": "x-25",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-18",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 20.0,
+              "predicted_sec": 20.5,
+              "error_sec": 0.5,
+              "truth_type_id": "simultaneous_customer_service",
+              "predicted_type_id": "simultaneous_customer_service",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-12",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-44",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 16.0,
+              "predicted_sec": 15.0,
+              "error_sec": 1.0,
+              "truth_type_id": "rejected_banknote_recombined_without_check",
+              "predicted_type_id": "rejected_banknote_recombined_without_check",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-2",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 10.0,
+              "predicted_sec": 9.5,
+              "error_sec": 0.5,
+              "truth_type_id": "customer_identity_not_presented",
+              "predicted_type_id": "customer_identity_not_presented",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-13",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 0,
+            "missed": 1,
+            "extra": 1,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 1,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [
+            {
+              "truth_event_index": 0,
+              "timecode_sec": 47.0,
+              "type_id": "cash_counting_omitted"
+            }
+          ],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 58.5,
+              "type_id": "cash_counting_omitted"
+            }
+          ]
+        },
+        {
+          "video_id": "x-37",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-11",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 18.0,
+              "predicted_sec": 17.5,
+              "error_sec": 0.5,
+              "truth_type_id": "equipment_left_on",
+              "predicted_type_id": "equipment_left_on",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-23",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-29",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-32",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 5.0,
+              "predicted_sec": 5.5,
+              "error_sec": 0.5,
+              "truth_type_id": "cash_office_door_left_open",
+              "predicted_type_id": "cash_office_door_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 1,
+              "timecode_sec": 11.5,
+              "type_id": "cash_office_door_left_open"
+            }
+          ]
+        },
+        {
+          "video_id": "x-24",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 8.0,
+              "predicted_sec": 8.0,
+              "error_sec": 0.0,
+              "truth_type_id": "unsecured_storage_on_departure",
+              "predicted_type_id": "unsecured_storage_on_departure",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-22",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 14.0,
+              "predicted_sec": 14.0,
+              "error_sec": 0.0,
+              "truth_type_id": "safe_key_left_in_lock",
+              "predicted_type_id": "safe_key_left_in_lock",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-28",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 7.0,
+              "predicted_sec": 7.5,
+              "error_sec": 0.5,
+              "truth_type_id": "workstation_information_left_open",
+              "predicted_type_id": "workstation_information_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-27",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-39",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-26",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 9.0,
+              "predicted_sec": 9.5,
+              "error_sec": 0.5,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-21",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-34",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 13.0,
+              "predicted_sec": 12.5,
+              "error_sec": 0.5,
+              "truth_type_id": "customer_departed_before_completion",
+              "predicted_type_id": "customer_departed_before_completion",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        }
+      ],
+      "matching": "One-to-one monotone temporal matching: maximum cardinality, minimum total absolute timing error, then type agreement between equally good monotone solutions.",
+      "scope": "End-to-end detected typed events; includes detector misses, wrong types, and unmatched alerts. Human-unverified truth types are explicitly excluded from typed scoring."
+    },
+    "2": {
+      "tolerance_sec": 2.0,
+      "video_count": 40,
+      "ground_truth_events": 22,
+      "typed_ground_truth_events": 22,
+      "untyped_ground_truth_events": 0,
+      "predicted_events": 27,
+      "predictions_excluded_for_untyped_matched_truth": 0,
+      "detection": {
+        "tp": 20,
+        "fp": 7,
+        "fn": 2,
+        "precision": 0.7407407407407407,
+        "recall": 0.9090909090909091,
+        "f1": 0.8163265306122449,
+        "matched": 20,
+        "missed": 2,
+        "extra": 7,
+        "errors_sec": [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.0,
+          0.5,
+          0.0,
+          0.5,
+          2.0,
+          0.5,
+          1.0,
+          0.5,
+          0.5,
+          0.5,
+          0.0,
+          0.0,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "matched_mae_sec": 0.5
+      },
+      "typed": {
+        "tp": 20,
+        "fp": 7,
+        "fn": 2,
+        "precision": 0.7407407407407407,
+        "recall": 0.9090909090909091,
+        "f1": 0.8163265306122449,
+        "type_correct_matched": 20,
+        "wrong_type_matched": 0,
+        "missed_typed_truth": 2,
+        "unmatched_alerts": 7,
+        "classification_accuracy_on_temporally_matched_typed_events": 1.0,
+        "macro_f1_supported": 0.8677083333333333
+      },
+      "per_class": {
+        "accepted_cash_left_exposed": {
+          "tp": 4,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.8,
+          "recall": 0.8,
+          "f1": 0.8,
+          "support": 5
+        },
+        "cash_counting_omitted": {
+          "tp": 0,
+          "fp": 2,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1
+        },
+        "cash_not_fully_delivered": {
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "support": 1
+        },
+        "cash_office_door_left_open": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "support": 3
+        },
+        "collector_documents_not_presented": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "customer_cash_combined": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "customer_departed_before_completion": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "customer_identity_not_presented": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "equipment_left_on": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "personal_items_on_cash_desk": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "rejected_banknote_recombined_without_check": {
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "support": 1
+        },
+        "safe_key_left_in_lock": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "safe_left_open": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "simultaneous_customer_service": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "unsecured_storage_on_departure": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "workstation_information_left_open": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        }
+      },
+      "videos": [
+        {
+          "video_id": "x-17",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 7.0,
+              "predicted_sec": 7.5,
+              "error_sec": 0.5,
+              "truth_type_id": "collector_documents_not_presented",
+              "predicted_type_id": "collector_documents_not_presented",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-30",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 1,
+              "truth_sec": 13.0,
+              "predicted_sec": 13.5,
+              "error_sec": 0.5,
+              "truth_type_id": "cash_office_door_left_open",
+              "predicted_type_id": "cash_office_door_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 4.5,
+              "type_id": "cash_office_door_left_open"
+            }
+          ]
+        },
+        {
+          "video_id": "x-19",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-5",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-33",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 6.0,
+              "predicted_sec": 6.5,
+              "error_sec": 0.5,
+              "truth_type_id": "cash_office_door_left_open",
+              "predicted_type_id": "cash_office_door_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-3",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-35",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-43",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-16",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-45",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-4",
+          "counts": {
+            "truth": 2,
+            "known_truth": 2,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 2,
+            "missed": 0,
+            "extra": 0,
+            "correct": 2,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 57.0,
+              "predicted_sec": 56.5,
+              "error_sec": 0.5,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            },
+            {
+              "truth_event_index": 1,
+              "predicted_event_index": 1,
+              "truth_sec": 68.0,
+              "predicted_sec": 67.5,
+              "error_sec": 0.5,
+              "truth_type_id": "customer_cash_combined",
+              "predicted_type_id": "customer_cash_combined",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-10",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-38",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 33.0,
+              "predicted_sec": 33.0,
+              "error_sec": 0.0,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 1,
+              "timecode_sec": 53.5,
+              "type_id": "accepted_cash_left_exposed"
+            }
+          ]
+        },
+        {
+          "video_id": "x-46",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 1,
+              "truth_sec": 11.0,
+              "predicted_sec": 11.5,
+              "error_sec": 0.5,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 3.0,
+              "type_id": "rejected_banknote_recombined_without_check"
+            }
+          ]
+        },
+        {
+          "video_id": "x-15",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 0,
+            "missed": 1,
+            "extra": 1,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 1,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [
+            {
+              "truth_event_index": 0,
+              "timecode_sec": 15.0,
+              "type_id": "accepted_cash_left_exposed"
+            }
+          ],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 11.5,
+              "type_id": "cash_counting_omitted"
+            }
+          ]
+        },
+        {
+          "video_id": "x-8",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-40",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 17.0,
+              "predicted_sec": 17.0,
+              "error_sec": 0.0,
+              "truth_type_id": "personal_items_on_cash_desk",
+              "predicted_type_id": "personal_items_on_cash_desk",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-31",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-14",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-20",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 5.0,
+              "predicted_sec": 5.5,
+              "error_sec": 0.5,
+              "truth_type_id": "safe_left_open",
+              "predicted_type_id": "safe_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-1",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 1,
+              "truth_sec": 22.0,
+              "predicted_sec": 24.0,
+              "error_sec": 2.0,
+              "truth_type_id": "cash_not_fully_delivered",
+              "predicted_type_id": "cash_not_fully_delivered",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 13.5,
+              "type_id": "cash_not_fully_delivered"
+            }
+          ]
+        },
+        {
+          "video_id": "x-25",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-18",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 20.0,
+              "predicted_sec": 20.5,
+              "error_sec": 0.5,
+              "truth_type_id": "simultaneous_customer_service",
+              "predicted_type_id": "simultaneous_customer_service",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-12",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-44",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 16.0,
+              "predicted_sec": 15.0,
+              "error_sec": 1.0,
+              "truth_type_id": "rejected_banknote_recombined_without_check",
+              "predicted_type_id": "rejected_banknote_recombined_without_check",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-2",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 10.0,
+              "predicted_sec": 9.5,
+              "error_sec": 0.5,
+              "truth_type_id": "customer_identity_not_presented",
+              "predicted_type_id": "customer_identity_not_presented",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-13",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 0,
+            "missed": 1,
+            "extra": 1,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 1,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [
+            {
+              "truth_event_index": 0,
+              "timecode_sec": 47.0,
+              "type_id": "cash_counting_omitted"
+            }
+          ],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 58.5,
+              "type_id": "cash_counting_omitted"
+            }
+          ]
+        },
+        {
+          "video_id": "x-37",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-11",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 18.0,
+              "predicted_sec": 17.5,
+              "error_sec": 0.5,
+              "truth_type_id": "equipment_left_on",
+              "predicted_type_id": "equipment_left_on",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-23",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-29",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-32",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 5.0,
+              "predicted_sec": 5.5,
+              "error_sec": 0.5,
+              "truth_type_id": "cash_office_door_left_open",
+              "predicted_type_id": "cash_office_door_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 1,
+              "timecode_sec": 11.5,
+              "type_id": "cash_office_door_left_open"
+            }
+          ]
+        },
+        {
+          "video_id": "x-24",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 8.0,
+              "predicted_sec": 8.0,
+              "error_sec": 0.0,
+              "truth_type_id": "unsecured_storage_on_departure",
+              "predicted_type_id": "unsecured_storage_on_departure",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-22",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 14.0,
+              "predicted_sec": 14.0,
+              "error_sec": 0.0,
+              "truth_type_id": "safe_key_left_in_lock",
+              "predicted_type_id": "safe_key_left_in_lock",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-28",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 7.0,
+              "predicted_sec": 7.5,
+              "error_sec": 0.5,
+              "truth_type_id": "workstation_information_left_open",
+              "predicted_type_id": "workstation_information_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-27",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-39",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-26",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 9.0,
+              "predicted_sec": 9.5,
+              "error_sec": 0.5,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-21",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-34",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 13.0,
+              "predicted_sec": 12.5,
+              "error_sec": 0.5,
+              "truth_type_id": "customer_departed_before_completion",
+              "predicted_type_id": "customer_departed_before_completion",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        }
+      ],
+      "matching": "One-to-one monotone temporal matching: maximum cardinality, minimum total absolute timing error, then type agreement between equally good monotone solutions.",
+      "scope": "End-to-end detected typed events; includes detector misses, wrong types, and unmatched alerts. Human-unverified truth types are explicitly excluded from typed scoring."
+    },
+    "5": {
+      "tolerance_sec": 5.0,
+      "video_count": 40,
+      "ground_truth_events": 22,
+      "typed_ground_truth_events": 22,
+      "untyped_ground_truth_events": 0,
+      "predicted_events": 27,
+      "predictions_excluded_for_untyped_matched_truth": 0,
+      "detection": {
+        "tp": 21,
+        "fp": 6,
+        "fn": 1,
+        "precision": 0.7777777777777778,
+        "recall": 0.9545454545454546,
+        "f1": 0.8571428571428571,
+        "matched": 21,
+        "missed": 1,
+        "extra": 6,
+        "errors_sec": [
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.5,
+          0.0,
+          0.5,
+          3.5,
+          0.0,
+          0.5,
+          2.0,
+          0.5,
+          1.0,
+          0.5,
+          0.5,
+          0.5,
+          0.0,
+          0.0,
+          0.5,
+          0.5,
+          0.5
+        ],
+        "matched_mae_sec": 0.6428571428571429
+      },
+      "typed": {
+        "tp": 20,
+        "fp": 7,
+        "fn": 2,
+        "precision": 0.7407407407407407,
+        "recall": 0.9090909090909091,
+        "f1": 0.8163265306122449,
+        "type_correct_matched": 20,
+        "wrong_type_matched": 1,
+        "missed_typed_truth": 1,
+        "unmatched_alerts": 6,
+        "classification_accuracy_on_temporally_matched_typed_events": 0.9523809523809523,
+        "macro_f1_supported": 0.8677083333333333
+      },
+      "per_class": {
+        "accepted_cash_left_exposed": {
+          "tp": 4,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.8,
+          "recall": 0.8,
+          "f1": 0.8,
+          "support": 5
+        },
+        "cash_counting_omitted": {
+          "tp": 0,
+          "fp": 2,
+          "fn": 1,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1
+        },
+        "cash_not_fully_delivered": {
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "support": 1
+        },
+        "cash_office_door_left_open": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.75,
+          "support": 3
+        },
+        "collector_documents_not_presented": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "customer_cash_combined": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "customer_departed_before_completion": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "customer_identity_not_presented": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "equipment_left_on": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "personal_items_on_cash_desk": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "rejected_banknote_recombined_without_check": {
+          "tp": 1,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "support": 1
+        },
+        "safe_key_left_in_lock": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "safe_left_open": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "simultaneous_customer_service": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "unsecured_storage_on_departure": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        },
+        "workstation_information_left_open": {
+          "tp": 1,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1
+        }
+      },
+      "videos": [
+        {
+          "video_id": "x-17",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 7.0,
+              "predicted_sec": 7.5,
+              "error_sec": 0.5,
+              "truth_type_id": "collector_documents_not_presented",
+              "predicted_type_id": "collector_documents_not_presented",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-30",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 1,
+              "truth_sec": 13.0,
+              "predicted_sec": 13.5,
+              "error_sec": 0.5,
+              "truth_type_id": "cash_office_door_left_open",
+              "predicted_type_id": "cash_office_door_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 4.5,
+              "type_id": "cash_office_door_left_open"
+            }
+          ]
+        },
+        {
+          "video_id": "x-19",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-5",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-33",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 6.0,
+              "predicted_sec": 6.5,
+              "error_sec": 0.5,
+              "truth_type_id": "cash_office_door_left_open",
+              "predicted_type_id": "cash_office_door_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-3",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-35",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-43",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-16",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-45",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-4",
+          "counts": {
+            "truth": 2,
+            "known_truth": 2,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 2,
+            "missed": 0,
+            "extra": 0,
+            "correct": 2,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 57.0,
+              "predicted_sec": 56.5,
+              "error_sec": 0.5,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            },
+            {
+              "truth_event_index": 1,
+              "predicted_event_index": 1,
+              "truth_sec": 68.0,
+              "predicted_sec": 67.5,
+              "error_sec": 0.5,
+              "truth_type_id": "customer_cash_combined",
+              "predicted_type_id": "customer_cash_combined",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-10",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-38",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 33.0,
+              "predicted_sec": 33.0,
+              "error_sec": 0.0,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 1,
+              "timecode_sec": 53.5,
+              "type_id": "accepted_cash_left_exposed"
+            }
+          ]
+        },
+        {
+          "video_id": "x-46",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 1,
+              "truth_sec": 11.0,
+              "predicted_sec": 11.5,
+              "error_sec": 0.5,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 3.0,
+              "type_id": "rejected_banknote_recombined_without_check"
+            }
+          ]
+        },
+        {
+          "video_id": "x-15",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 1,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 15.0,
+              "predicted_sec": 11.5,
+              "error_sec": 3.5,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "cash_counting_omitted",
+              "category": "wrong_type"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-8",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-40",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 17.0,
+              "predicted_sec": 17.0,
+              "error_sec": 0.0,
+              "truth_type_id": "personal_items_on_cash_desk",
+              "predicted_type_id": "personal_items_on_cash_desk",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-31",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-14",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-20",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 5.0,
+              "predicted_sec": 5.5,
+              "error_sec": 0.5,
+              "truth_type_id": "safe_left_open",
+              "predicted_type_id": "safe_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-1",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 1,
+              "truth_sec": 22.0,
+              "predicted_sec": 24.0,
+              "error_sec": 2.0,
+              "truth_type_id": "cash_not_fully_delivered",
+              "predicted_type_id": "cash_not_fully_delivered",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 13.5,
+              "type_id": "cash_not_fully_delivered"
+            }
+          ]
+        },
+        {
+          "video_id": "x-25",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-18",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 20.0,
+              "predicted_sec": 20.5,
+              "error_sec": 0.5,
+              "truth_type_id": "simultaneous_customer_service",
+              "predicted_type_id": "simultaneous_customer_service",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-12",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-44",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 16.0,
+              "predicted_sec": 15.0,
+              "error_sec": 1.0,
+              "truth_type_id": "rejected_banknote_recombined_without_check",
+              "predicted_type_id": "rejected_banknote_recombined_without_check",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-2",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 10.0,
+              "predicted_sec": 9.5,
+              "error_sec": 0.5,
+              "truth_type_id": "customer_identity_not_presented",
+              "predicted_type_id": "customer_identity_not_presented",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-13",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 0,
+            "missed": 1,
+            "extra": 1,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 1,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [
+            {
+              "truth_event_index": 0,
+              "timecode_sec": 47.0,
+              "type_id": "cash_counting_omitted"
+            }
+          ],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 0,
+              "timecode_sec": 58.5,
+              "type_id": "cash_counting_omitted"
+            }
+          ]
+        },
+        {
+          "video_id": "x-37",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-11",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 18.0,
+              "predicted_sec": 17.5,
+              "error_sec": 0.5,
+              "truth_type_id": "equipment_left_on",
+              "predicted_type_id": "equipment_left_on",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-23",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-29",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-32",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 2,
+            "matched": 1,
+            "missed": 0,
+            "extra": 1,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 5.0,
+              "predicted_sec": 5.5,
+              "error_sec": 0.5,
+              "truth_type_id": "cash_office_door_left_open",
+              "predicted_type_id": "cash_office_door_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": [
+            {
+              "predicted_event_index": 1,
+              "timecode_sec": 11.5,
+              "type_id": "cash_office_door_left_open"
+            }
+          ]
+        },
+        {
+          "video_id": "x-24",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 8.0,
+              "predicted_sec": 8.0,
+              "error_sec": 0.0,
+              "truth_type_id": "unsecured_storage_on_departure",
+              "predicted_type_id": "unsecured_storage_on_departure",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-22",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 14.0,
+              "predicted_sec": 14.0,
+              "error_sec": 0.0,
+              "truth_type_id": "safe_key_left_in_lock",
+              "predicted_type_id": "safe_key_left_in_lock",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-28",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 7.0,
+              "predicted_sec": 7.5,
+              "error_sec": 0.5,
+              "truth_type_id": "workstation_information_left_open",
+              "predicted_type_id": "workstation_information_left_open",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-27",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-39",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-26",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 9.0,
+              "predicted_sec": 9.5,
+              "error_sec": 0.5,
+              "truth_type_id": "accepted_cash_left_exposed",
+              "predicted_type_id": "accepted_cash_left_exposed",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-21",
+          "counts": {
+            "truth": 0,
+            "known_truth": 0,
+            "untyped_truth": 0,
+            "predicted": 0,
+            "matched": 0,
+            "missed": 0,
+            "extra": 0,
+            "correct": 0,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [],
+          "missed_truth": [],
+          "extra_predictions": []
+        },
+        {
+          "video_id": "x-34",
+          "counts": {
+            "truth": 1,
+            "known_truth": 1,
+            "untyped_truth": 0,
+            "predicted": 1,
+            "matched": 1,
+            "missed": 0,
+            "extra": 0,
+            "correct": 1,
+            "wrong": 0,
+            "known_missed": 0,
+            "untyped_matched": 0
+          },
+          "matches": [
+            {
+              "truth_event_index": 0,
+              "predicted_event_index": 0,
+              "truth_sec": 13.0,
+              "predicted_sec": 12.5,
+              "error_sec": 0.5,
+              "truth_type_id": "customer_departed_before_completion",
+              "predicted_type_id": "customer_departed_before_completion",
+              "category": "type_correct"
+            }
+          ],
+          "missed_truth": [],
+          "extra_predictions": []
+        }
+      ],
+      "matching": "One-to-one monotone temporal matching: maximum cardinality, minimum total absolute timing error, then type agreement between equally good monotone solutions.",
+      "scope": "End-to-end detected typed events; includes detector misses, wrong types, and unmatched alerts. Human-unverified truth types are explicitly excluded from typed scoring."
+    }
+  },
+  "timing": {
+    "matched_events": 21,
+    "mean_absolute_error_sec": 0.6428571428571429,
+    "median_absolute_error_sec": 0.5,
+    "max_absolute_error_sec": 3.5,
+    "scope": "Only time-matched events; misses and extra events are reported separately."
+  },
+  "http_runtime": {
+    "total_sec": 298.625,
+    "mean_sec": 7.0967142857142855,
+    "median_sec": 6.5945,
+    "min_sec": 6.016,
+    "max_sec": 13.125,
+    "includes": "upload, validation, queue, per-job model load, inference, evidence, polling"
+  },
+  "class_names": {
+    "cash_not_fully_delivered": "Неполная выдача суммы",
+    "customer_identity_not_presented": "Документы клиента не представлены",
+    "accepted_cash_left_exposed": "Деньги оставлены вне защищённого хранения",
+    "equipment_left_on": "Оборудование оставлено включённым",
+    "cash_counting_omitted": "Пересчёт банкнот пропущен",
+    "collector_documents_not_presented": "Документы передающего денежный мешок не представлены",
+    "simultaneous_customer_service": "Одновременное обслуживание клиентов",
+    "safe_left_open": "Сейф оставлен открытым",
+    "safe_key_left_in_lock": "Ключ оставлен в замке сейфа",
+    "unsecured_storage_on_departure": "Уход с рабочего места с незапертым сейфом",
+    "workstation_information_left_open": "Информация оставлена открытой",
+    "cash_office_door_left_open": "Дверь кассового кабинета оставлена открытой",
+    "customer_departed_before_completion": "Клиент ушёл до завершения операции",
+    "personal_items_on_cash_desk": "Личные вещи на кассовом столе",
+    "rejected_banknote_recombined_without_check": "Отклонённая банкнота возвращена без проверки",
+    "customer_cash_combined": "Банкноты разных клиентов объединены"
+  },
+  "videos": [
+    {
+      "id": "x-1",
+      "files": [
+        "X-1.mov"
+      ],
+      "sha256": "8911a9219b9433091824e553a70bb80335f075fd8ac982d2062d2ecf023c16bc",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 22.0,
+          "type_id": "cash_not_fully_delivered",
+          "type_verified": true,
+          "time_verified": true
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 13.5,
+          "type_id": "cash_not_fully_delivered",
+          "type_confidence": 0.8799146413803101,
+          "evidence_count": 3
+        },
+        {
+          "timecode_sec": 24.0,
+          "type_id": "cash_not_fully_delivered",
+          "type_confidence": 0.9433644413948059,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-1",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 1,
+          "missed": 0,
+          "extra": 1,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 1,
+            "truth_sec": 22.0,
+            "predicted_sec": 24.0,
+            "error_sec": 2.0,
+            "truth_type_id": "cash_not_fully_delivered",
+            "predicted_type_id": "cash_not_fully_delivered",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 0,
+            "timecode_sec": 13.5,
+            "type_id": "cash_not_fully_delivered"
+          }
+        ]
+      },
+      "fully_correct": false,
+      "label_source": "human_confirmed",
+      "event_time_verified": true,
+      "http_elapsed_sec": 6.875
+    },
+    {
+      "id": "x-2",
+      "files": [
+        "X-2.mov"
+      ],
+      "sha256": "9932ae0a10d3b9371bf52ea558dc19092fcf47adcd275a73a52a56b95464bca6",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 10.0,
+          "type_id": "customer_identity_not_presented",
+          "type_verified": true,
+          "time_verified": true
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 9.5,
+          "type_id": "customer_identity_not_presented",
+          "type_confidence": 0.9400234818458557,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-2",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 10.0,
+            "predicted_sec": 9.5,
+            "error_sec": 0.5,
+            "truth_type_id": "customer_identity_not_presented",
+            "predicted_type_id": "customer_identity_not_presented",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "human_confirmed",
+      "event_time_verified": true,
+      "http_elapsed_sec": 7.156
+    },
+    {
+      "id": "x-3",
+      "files": [
+        "Х-3.mov"
+      ],
+      "sha256": "21468fcef4ea5f45ce7d465e620f84e09c8b50314f4ecdc06f69224c701b3a5b",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-3",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "human_confirmed",
+      "event_time_verified": true,
+      "http_elapsed_sec": 6.75
+    },
+    {
+      "id": "x-4",
+      "files": [
+        "Х-4.mov",
+        "Х-47.mov"
+      ],
+      "sha256": "5385be9420e6a70547d6bcfd0b13d60f9c0738877645afa277d09550a96b8445",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 57.0,
+          "type_id": "accepted_cash_left_exposed",
+          "type_verified": true,
+          "time_verified": true
+        },
+        {
+          "timecode_sec": 68.0,
+          "type_id": "customer_cash_combined",
+          "type_verified": true,
+          "time_verified": true
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 56.5,
+          "type_id": "accepted_cash_left_exposed",
+          "type_confidence": 0.8764436841011047,
+          "evidence_count": 3
+        },
+        {
+          "timecode_sec": 67.5,
+          "type_id": "customer_cash_combined",
+          "type_confidence": 0.9053590893745422,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-4",
+        "counts": {
+          "truth": 2,
+          "known_truth": 2,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 2,
+          "missed": 0,
+          "extra": 0,
+          "correct": 2,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 57.0,
+            "predicted_sec": 56.5,
+            "error_sec": 0.5,
+            "truth_type_id": "accepted_cash_left_exposed",
+            "predicted_type_id": "accepted_cash_left_exposed",
+            "category": "type_correct"
+          },
+          {
+            "truth_event_index": 1,
+            "predicted_event_index": 1,
+            "truth_sec": 68.0,
+            "predicted_sec": 67.5,
+            "error_sec": 0.5,
+            "truth_type_id": "customer_cash_combined",
+            "predicted_type_id": "customer_cash_combined",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "human_confirmed",
+      "event_time_verified": true,
+      "http_elapsed_sec": 13.125
+    },
+    {
+      "id": "x-5",
+      "files": [
+        "Х-5.mov",
+        "Х-48.mov"
+      ],
+      "sha256": "1f5840bff58f298e89c4afa00cb1c18f6dafc5c4096c251d9b507604ebefe906",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-5",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 8.469
+    },
+    {
+      "id": "x-8",
+      "files": [
+        "Х-8.mov"
+      ],
+      "sha256": "6a53e10acdcf52396ad5b1697eead32d8322c0911d792523a5c33fe5b388f4e7",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-8",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 7.719
+    },
+    {
+      "id": "x-10",
+      "files": [
+        "Х-10.mov"
+      ],
+      "sha256": "57a0e46c7a45f0e831f61d9c80722fefe4b74dbcfe1d3031ff58307d481f9a5c",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-10",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.125
+    },
+    {
+      "id": "x-11",
+      "files": [
+        "Х-11.mov"
+      ],
+      "sha256": "b3a954a5b761ad47943e061599315e3fe9d22573eeb92bb14bf315cdcd422fc5",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 18.0,
+          "type_id": "equipment_left_on",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 17.5,
+          "type_id": "equipment_left_on",
+          "type_confidence": 0.9678077101707458,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-11",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 18.0,
+            "predicted_sec": 17.5,
+            "error_sec": 0.5,
+            "truth_type_id": "equipment_left_on",
+            "predicted_type_id": "equipment_left_on",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.86
+    },
+    {
+      "id": "x-12",
+      "files": [
+        "Х-12.mov"
+      ],
+      "sha256": "955755baf54418b48ea645dcd98e7e8dcca1d1e227e9b286a9427062db304fd4",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-12",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 10.843
+    },
+    {
+      "id": "x-13",
+      "files": [
+        "Х-13.mov"
+      ],
+      "sha256": "a37930cf119bb691be77d8624b18333b04d9c67066a7f4627d63e3208dfa6057",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 47.0,
+          "type_id": "cash_counting_omitted",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 58.5,
+          "type_id": "cash_counting_omitted",
+          "type_confidence": 0.576746940612793,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-13",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 0,
+          "missed": 1,
+          "extra": 1,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 1,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [
+          {
+            "truth_event_index": 0,
+            "timecode_sec": 47.0,
+            "type_id": "cash_counting_omitted"
+          }
+        ],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 0,
+            "timecode_sec": 58.5,
+            "type_id": "cash_counting_omitted"
+          }
+        ]
+      },
+      "fully_correct": false,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 7.844
+    },
+    {
+      "id": "x-14",
+      "files": [
+        "Х-14.mov"
+      ],
+      "sha256": "7d6890ecb4a2b28bbdd3b61b6711566eee84a53ab3439c40cd9b6a3a6714c681",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-14",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 10.078
+    },
+    {
+      "id": "x-15",
+      "files": [
+        "Х-15.mov"
+      ],
+      "sha256": "69caf59620fcd80bedcb664514730ab38f2f800da27000a8e037d7440be5dc7a",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 15.0,
+          "type_id": "accepted_cash_left_exposed",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 11.5,
+          "type_id": "cash_counting_omitted",
+          "type_confidence": 0.6827819347381592,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-15",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 1,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 15.0,
+            "predicted_sec": 11.5,
+            "error_sec": 3.5,
+            "truth_type_id": "accepted_cash_left_exposed",
+            "predicted_type_id": "cash_counting_omitted",
+            "category": "wrong_type"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": false,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.734
+    },
+    {
+      "id": "x-16",
+      "files": [
+        "Х-16.mov"
+      ],
+      "sha256": "3f516431cf37e3900b7eae857a7b09be258f485702ab56bc6e5b6129103f1fa5",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-16",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.781
+    },
+    {
+      "id": "x-17",
+      "files": [
+        "Х-17.mov"
+      ],
+      "sha256": "0378b8026b2e6afd1775a5d0fdd12dd09c491785b626e9c20428f7dc6bd59364",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 7.0,
+          "type_id": "collector_documents_not_presented",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 7.5,
+          "type_id": "collector_documents_not_presented",
+          "type_confidence": 0.9637778997421265,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-17",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 7.0,
+            "predicted_sec": 7.5,
+            "error_sec": 0.5,
+            "truth_type_id": "collector_documents_not_presented",
+            "predicted_type_id": "collector_documents_not_presented",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.11
+    },
+    {
+      "id": "x-18",
+      "files": [
+        "Х-18.mov"
+      ],
+      "sha256": "90607b0b0cb772fcf29b0c7e0e56fa6af36da6fac0efe93b8a616b5de94a156c",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 20.0,
+          "type_id": "simultaneous_customer_service",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 20.5,
+          "type_id": "simultaneous_customer_service",
+          "type_confidence": 0.9659138321876526,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-18",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 20.0,
+            "predicted_sec": 20.5,
+            "error_sec": 0.5,
+            "truth_type_id": "simultaneous_customer_service",
+            "predicted_type_id": "simultaneous_customer_service",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.265
+    },
+    {
+      "id": "x-19",
+      "files": [
+        "Х-19.mov"
+      ],
+      "sha256": "16065504b21260bff18698c7bbf048ffa356c9de43d43b92643b6c2eddedac0f",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-19",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 7.625
+    },
+    {
+      "id": "x-20",
+      "files": [
+        "Х-20.mov"
+      ],
+      "sha256": "7e585e33517f7258bd2d1ed3e139556609bc997bb07b78355555060ef193b77a",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 5.0,
+          "type_id": "safe_left_open",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 5.5,
+          "type_id": "safe_left_open",
+          "type_confidence": 0.9506216645240784,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-20",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 5.0,
+            "predicted_sec": 5.5,
+            "error_sec": 0.5,
+            "truth_type_id": "safe_left_open",
+            "predicted_type_id": "safe_left_open",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.016
+    },
+    {
+      "id": "x-21",
+      "files": [
+        "Х-21.mov"
+      ],
+      "sha256": "efd876a04224cac781ac64bf5d6e107ded67340b7b7715fd9ca3408b240a1075",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-21",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.218
+    },
+    {
+      "id": "x-22",
+      "files": [
+        "Х-22.mov"
+      ],
+      "sha256": "c9a30d44907e4a41b3a8ccf101774cd2e0804de20927bfbc9e1ccba1f2326b78",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 14.0,
+          "type_id": "safe_key_left_in_lock",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 14.0,
+          "type_id": "safe_key_left_in_lock",
+          "type_confidence": 0.9413163065910339,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-22",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 14.0,
+            "predicted_sec": 14.0,
+            "error_sec": 0.0,
+            "truth_type_id": "safe_key_left_in_lock",
+            "predicted_type_id": "safe_key_left_in_lock",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.235
+    },
+    {
+      "id": "x-23",
+      "files": [
+        "Х-23.mov"
+      ],
+      "sha256": "b637677ef5a7f0fa54d9f116ce6493cf74a4c99b8149a9c9916b96ef257535bd",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-23",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.156
+    },
+    {
+      "id": "x-24",
+      "files": [
+        "Х-24.mov"
+      ],
+      "sha256": "c175a683749401d5a9ecf6f1c188b64fa8a09543f41482c1e4eb2232255715d3",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 8.0,
+          "type_id": "unsecured_storage_on_departure",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 8.0,
+          "type_id": "unsecured_storage_on_departure",
+          "type_confidence": 0.9393362402915955,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-24",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 8.0,
+            "predicted_sec": 8.0,
+            "error_sec": 0.0,
+            "truth_type_id": "unsecured_storage_on_departure",
+            "predicted_type_id": "unsecured_storage_on_departure",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.109
+    },
+    {
+      "id": "x-25",
+      "files": [
+        "Х-25.mov"
+      ],
+      "sha256": "901f61cf1a1b8754dda56466308c19fc203a1a4c0e85d1e7827849d34e2d52f0",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-25",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.5
+    },
+    {
+      "id": "x-26",
+      "files": [
+        "Х-26.mov"
+      ],
+      "sha256": "e3a00b6e0f38b1d9b5498140f14906c71e204359262a90ce7a9974d64bf081e9",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 9.0,
+          "type_id": "accepted_cash_left_exposed",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 9.5,
+          "type_id": "accepted_cash_left_exposed",
+          "type_confidence": 0.5998430848121643,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-26",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 9.0,
+            "predicted_sec": 9.5,
+            "error_sec": 0.5,
+            "truth_type_id": "accepted_cash_left_exposed",
+            "predicted_type_id": "accepted_cash_left_exposed",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.219
+    },
+    {
+      "id": "x-27",
+      "files": [
+        "Х-27.mov"
+      ],
+      "sha256": "d3d21494d74e40a7586fe4f6164e515f6621a2d413538c4e15c67d394e85fc2d",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-27",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.359
+    },
+    {
+      "id": "x-28",
+      "files": [
+        "Х-28.mov"
+      ],
+      "sha256": "d15ef04bcfae571bd2d7fc4e4d709ba595ae19f44136a43e7277f17e7b6e5b6d",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 7.0,
+          "type_id": "workstation_information_left_open",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 7.5,
+          "type_id": "workstation_information_left_open",
+          "type_confidence": 0.9248449206352234,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-28",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 7.0,
+            "predicted_sec": 7.5,
+            "error_sec": 0.5,
+            "truth_type_id": "workstation_information_left_open",
+            "predicted_type_id": "workstation_information_left_open",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.657
+    },
+    {
+      "id": "x-29",
+      "files": [
+        "Х-29.mov"
+      ],
+      "sha256": "b9bfb76ac8ea47eb368fc78a2f6370e4d98e79185972f63cf301ee22f12b5941",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-29",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.156
+    },
+    {
+      "id": "x-30",
+      "files": [
+        "Х-30.mov"
+      ],
+      "sha256": "05af66ce27b83d7c10c5d33b6f1847ec042c01ed21afdcbd43a13abcefd28199",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 13.0,
+          "type_id": "cash_office_door_left_open",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 4.5,
+          "type_id": "cash_office_door_left_open",
+          "type_confidence": 0.9534727931022644,
+          "evidence_count": 3
+        },
+        {
+          "timecode_sec": 13.5,
+          "type_id": "cash_office_door_left_open",
+          "type_confidence": 0.9279491305351257,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-30",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 1,
+          "missed": 0,
+          "extra": 1,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 1,
+            "truth_sec": 13.0,
+            "predicted_sec": 13.5,
+            "error_sec": 0.5,
+            "truth_type_id": "cash_office_door_left_open",
+            "predicted_type_id": "cash_office_door_left_open",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 0,
+            "timecode_sec": 4.5,
+            "type_id": "cash_office_door_left_open"
+          }
+        ]
+      },
+      "fully_correct": false,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.219
+    },
+    {
+      "id": "x-31",
+      "files": [
+        "Х-31.mov"
+      ],
+      "sha256": "6a9fa7dd2e6db4cbe57f3c96a6cb256f23c04aa4e6fd44622fdf5de662cc0649",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-31",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.312
+    },
+    {
+      "id": "x-32",
+      "files": [
+        "Х-32.mov"
+      ],
+      "sha256": "bcc277cbf1a36245156b2bb9a0e0b826432390b42040c0b82201a8c21ab23ce9",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 5.0,
+          "type_id": "cash_office_door_left_open",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 5.5,
+          "type_id": "cash_office_door_left_open",
+          "type_confidence": 0.9619195461273193,
+          "evidence_count": 3
+        },
+        {
+          "timecode_sec": 11.5,
+          "type_id": "cash_office_door_left_open",
+          "type_confidence": 0.8912407755851746,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-32",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 1,
+          "missed": 0,
+          "extra": 1,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 5.0,
+            "predicted_sec": 5.5,
+            "error_sec": 0.5,
+            "truth_type_id": "cash_office_door_left_open",
+            "predicted_type_id": "cash_office_door_left_open",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 1,
+            "timecode_sec": 11.5,
+            "type_id": "cash_office_door_left_open"
+          }
+        ]
+      },
+      "fully_correct": false,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.297
+    },
+    {
+      "id": "x-33",
+      "files": [
+        "Х-33.mov"
+      ],
+      "sha256": "209e8aaca88df59064e5f28b3bcc489fee3eea9eb920889b69c03c83d52430c6",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 6.0,
+          "type_id": "cash_office_door_left_open",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 6.5,
+          "type_id": "cash_office_door_left_open",
+          "type_confidence": 0.8410288691520691,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-33",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 6.0,
+            "predicted_sec": 6.5,
+            "error_sec": 0.5,
+            "truth_type_id": "cash_office_door_left_open",
+            "predicted_type_id": "cash_office_door_left_open",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.078
+    },
+    {
+      "id": "x-34",
+      "files": [
+        "Х-34.mov"
+      ],
+      "sha256": "f3e351bea71150f4e8c76e2c8f0656a4e92063319d7cd39e264078c5ba9139c3",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 13.0,
+          "type_id": "customer_departed_before_completion",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 12.5,
+          "type_id": "customer_departed_before_completion",
+          "type_confidence": 0.9347192645072937,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-34",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 13.0,
+            "predicted_sec": 12.5,
+            "error_sec": 0.5,
+            "truth_type_id": "customer_departed_before_completion",
+            "predicted_type_id": "customer_departed_before_completion",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.156
+    },
+    {
+      "id": "x-35",
+      "files": [
+        "Х-35.mov"
+      ],
+      "sha256": "26430119e074d6f0eb5dbc7ec3e26bbc31cf18903265bb4372bd7d7104908640",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-35",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 7.594
+    },
+    {
+      "id": "x-37",
+      "files": [
+        "Х-37.mov"
+      ],
+      "sha256": "ac4cf04844c0aa08a5e19f5f7fe984f1477943294922d6ef77bdc5b88b97160e",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-37",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.109
+    },
+    {
+      "id": "x-38",
+      "files": [
+        "Х-38.mov"
+      ],
+      "sha256": "5a6f6a13ef88191ec1d9a2a303f1be74d16aa3381a57aaadba8850aac715ff10",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 33.0,
+          "type_id": "accepted_cash_left_exposed",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 33.0,
+          "type_id": "accepted_cash_left_exposed",
+          "type_confidence": 0.7647208571434021,
+          "evidence_count": 3
+        },
+        {
+          "timecode_sec": 53.5,
+          "type_id": "accepted_cash_left_exposed",
+          "type_confidence": 0.5546484589576721,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-38",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 1,
+          "missed": 0,
+          "extra": 1,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 33.0,
+            "predicted_sec": 33.0,
+            "error_sec": 0.0,
+            "truth_type_id": "accepted_cash_left_exposed",
+            "predicted_type_id": "accepted_cash_left_exposed",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 1,
+            "timecode_sec": 53.5,
+            "type_id": "accepted_cash_left_exposed"
+          }
+        ]
+      },
+      "fully_correct": false,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 8.172
+    },
+    {
+      "id": "x-39",
+      "files": [
+        "Х-39.mov"
+      ],
+      "sha256": "deeeee54539fb894b17447296bd7f0807b9dc662bad9af4dcd27f4fbdd677187",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-39",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 8.625
+    },
+    {
+      "id": "x-40",
+      "files": [
+        "Х-40.mov"
+      ],
+      "sha256": "6a81739ced0efdcd4a4feb76ea16562a20ceb53a2232a801528716c450366c9f",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 17.0,
+          "type_id": "personal_items_on_cash_desk",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 17.0,
+          "type_id": "personal_items_on_cash_desk",
+          "type_confidence": 0.9378446936607361,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-40",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 17.0,
+            "predicted_sec": 17.0,
+            "error_sec": 0.0,
+            "truth_type_id": "personal_items_on_cash_desk",
+            "predicted_type_id": "personal_items_on_cash_desk",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.86
+    },
+    {
+      "id": "x-43",
+      "files": [
+        "Х-43.mov"
+      ],
+      "sha256": "39e28d7be01cdb090ede1881ce3ef704fa413271deb69d6735c1953f340d6069",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-43",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.797
+    },
+    {
+      "id": "x-44",
+      "files": [
+        "Х-44.mov"
+      ],
+      "sha256": "9774ed882153af3ba1a7e71c9b9249619e2b3a97ae336aad6143369802ca3522",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 16.0,
+          "type_id": "rejected_banknote_recombined_without_check",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 15.0,
+          "type_id": "rejected_banknote_recombined_without_check",
+          "type_confidence": 0.8704389333724976,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-44",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 1,
+          "matched": 1,
+          "missed": 0,
+          "extra": 0,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 0,
+            "truth_sec": 16.0,
+            "predicted_sec": 15.0,
+            "error_sec": 1.0,
+            "truth_type_id": "rejected_banknote_recombined_without_check",
+            "predicted_type_id": "rejected_banknote_recombined_without_check",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.218
+    },
+    {
+      "id": "x-45",
+      "files": [
+        "Х-45.mov"
+      ],
+      "sha256": "524bf9ff2d5e81211dbbeff73129dbb5f3a5e5e35a64f443f53e16b1c2d471c7",
+      "truth_label": 0,
+      "predicted_label": 0,
+      "truth_events": [],
+      "predictions": [],
+      "comparison": {
+        "video_id": "x-45",
+        "counts": {
+          "truth": 0,
+          "known_truth": 0,
+          "untyped_truth": 0,
+          "predicted": 0,
+          "matched": 0,
+          "missed": 0,
+          "extra": 0,
+          "correct": 0,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [],
+        "missed_truth": [],
+        "extra_predictions": []
+      },
+      "fully_correct": true,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.532
+    },
+    {
+      "id": "x-46",
+      "files": [
+        "Х-46.mov"
+      ],
+      "sha256": "66fc5d28c2371592f9260305589bdc86636fdd2ebe7a7ec976eec00a23d43df4",
+      "truth_label": 1,
+      "predicted_label": 1,
+      "truth_events": [
+        {
+          "timecode_sec": 11.0,
+          "type_id": "accepted_cash_left_exposed",
+          "type_verified": true,
+          "time_verified": false
+        }
+      ],
+      "predictions": [
+        {
+          "timecode_sec": 3.0,
+          "type_id": "rejected_banknote_recombined_without_check",
+          "type_confidence": 0.6563524007797241,
+          "evidence_count": 3
+        },
+        {
+          "timecode_sec": 11.5,
+          "type_id": "accepted_cash_left_exposed",
+          "type_confidence": 0.5824985504150391,
+          "evidence_count": 3
+        }
+      ],
+      "comparison": {
+        "video_id": "x-46",
+        "counts": {
+          "truth": 1,
+          "known_truth": 1,
+          "untyped_truth": 0,
+          "predicted": 2,
+          "matched": 1,
+          "missed": 0,
+          "extra": 1,
+          "correct": 1,
+          "wrong": 0,
+          "known_missed": 0,
+          "untyped_matched": 0
+        },
+        "matches": [
+          {
+            "truth_event_index": 0,
+            "predicted_event_index": 1,
+            "truth_sec": 11.0,
+            "predicted_sec": 11.5,
+            "error_sec": 0.5,
+            "truth_type_id": "accepted_cash_left_exposed",
+            "predicted_type_id": "accepted_cash_left_exposed",
+            "category": "type_correct"
+          }
+        ],
+        "missed_truth": [],
+        "extra_predictions": [
+          {
+            "predicted_event_index": 0,
+            "timecode_sec": 3.0,
+            "type_id": "rejected_banknote_recombined_without_check"
+          }
+        ]
+      },
+      "fully_correct": false,
+      "label_source": "source_original_weak",
+      "event_time_verified": false,
+      "http_elapsed_sec": 6.25
+    }
+  ],
+  "limitations": [
+    "Original workbook has binary/time labels; typed comparison uses the reviewed workbook/manifest.",
+    "Most binary/time annotations retain weak original provenance; matches mean agreement with supplied labels.",
+    "There is no single event accuracy with meaningful true negatives; use event precision, recall and F1.",
+    "All 42 files were tested; exact duplicates counted once in primary metrics."
+  ],
+  "pdf_report": "docs/reports/forte-vision-ml-audit-2026-10-18.pdf",
+  "publication": "No videos, frames, credentials, reviewer notes, job IDs or absolute local paths included."
+}

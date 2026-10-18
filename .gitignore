@@ -8,4 +8,6 @@ __pycache__/
 backups/
 data/
 videos/
+/output/
+/tmp/
 .DS_Store
