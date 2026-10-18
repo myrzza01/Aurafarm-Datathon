@@ -255,8 +255,8 @@
       }
     }
   },
-  "stage": "frozen_detector_with_point_localizer",
-  "epochs": 25,
+  "stage": "frozen_detector_with_refined_point_localizer",
+  "epochs": 27,
   "training_scope": "all_available_event_localizer_refit",
   "event_tolerance_sec": 1.0,
   "action_confidence_calibrated": false,
