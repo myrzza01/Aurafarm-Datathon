@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="94" height="30" role="img" aria-label="Python">
+<rect width="94" height="30" fill="#200e1b"/><path d="M0 0H94V30H0Z" fill="none" stroke="#a31551" stroke-width="3"/>
+<rect x="9" y="11" width="8" height="8" fill="#fc9385"/>
+<text x="25" y="20" fill="#fff5f8" font-family="monospace" font-size="14">Python</text></svg>
